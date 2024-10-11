@@ -9,8 +9,8 @@ __pycache__
 #vscode
 .vscode
 
-venv/
-env/
+/venv/
+/env/
 .env
 .env.dev
 .env.prod
