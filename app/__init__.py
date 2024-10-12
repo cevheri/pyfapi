@@ -1,6 +1,6 @@
 import logging as log
 from app.config.app_settings import log_settings, db_settings
-from app.config.db_config import load_database_settings
+from app.config.db_config import init_db
 
 print("__init__.py is running")
 

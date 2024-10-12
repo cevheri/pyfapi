@@ -1,24 +1,19 @@
 import logging as log
 from contextlib import asynccontextmanager
-from sys import prefix
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app import load_database_settings
+from app import init_db
 from app.config.app_settings import cors_settings
 
-from fastapi import APIRouter, Depends
-
-from app.api import user_api
-from app.config.jwt_config import JWTBearer
-
+from app.api import user_api, auth_api
 
 
 @asynccontextmanager
 async def lifespan(_):
     log.debug("FastAPI Lifespan started")
-    load_database_settings()
+    await init_db()
     yield
 
 
@@ -41,7 +36,9 @@ app.add_middleware(
     allow_headers=cors_settings.ALLOWED_HEADERS
 )
 
-app.include_router(user_api.router, tags=["users"], dependencies=[Depends(JWTBearer())])
+app.include_router(user_api.router, tags=["users"])#, dependencies=[Depends(JWTBearer())])
+app.include_router(auth_api.router, tags=["auth"])
+
 
 @app.get("/")
 async def root():
