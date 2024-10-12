@@ -36,10 +36,10 @@ class UserService:
         log.debug(f"UserService User retrieved: {result}")
         return result
 
-    async def list(self, query: dict, page: int, limit: int) -> list[User] | None:
-        log.debug(f"UserService Listing users with query: {query}, page: {page}, limit: {limit}")
+    async def list(self, query: dict, page: int, limit: int):
+        log.debug(f"UserService list with query: {query}, page: {page}, limit: {limit}")
         result = await self.user_repository.list(query, page, limit)
-        log.debug(f"UserService Users retrieved: {len(result)}")
+        log.debug(f"UserService Users retrieved")
         return result
 
     async def update(self, user_id: str, user_update: UserUpdate | User) -> User:

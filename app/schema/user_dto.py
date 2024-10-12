@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator, field_validator
 
 
 class UserDTO(BaseModel):
@@ -33,6 +33,21 @@ class UserDTO(BaseModel):
             }
         }
 
+    # def to_dict(self)-> dict:
+    #     return {
+    #         "user_id": self.user_id,
+    #         "username": self.username,
+    #         "first_name": self.first_name,
+    #         "last_name": self.last_name,
+    #         "email": self.email,
+    #         "is_active": self.is_active,
+    #         "roles": self.roles,
+    #         "created_by": self.created_by,
+    #         "created_date": self.created_date.isoformat(),
+    #         "last_updated_by": self.last_updated_by,
+    #         "last_updated_date": self.last_updated_date.isoformat()
+    #     }
+
     def __init__(self , **kwargs):
         super().__init__(**kwargs)
         for k, v in kwargs.items():
@@ -53,3 +68,21 @@ class UserDTO(BaseModel):
             last_updated_by=user.last_updated_by,
             last_updated_date=user.last_updated_date
         )
+
+    @staticmethod
+    def from_entities(users):
+        return [UserDTO.from_entity(user) for user in users]
+
+    # @classmethod
+    # @field_validator("created_date")
+    # def validate_created_date(self, value):
+    #     if not value:
+    #         return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
+    #     return value
+    #
+    # @classmethod
+    # @field_validator("last_updated_date")
+    # def validate_last_updated_date(cls, value):
+    #     if not value:
+    #         return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
+    #     return value

@@ -3,10 +3,13 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from beanie import Document
+from beanie import PydanticObjectId
+from bson import ObjectId
 
 from app.api.vm.user_create import UserCreate
 from app.api.vm.user_update import UserUpdate
 from app.schema.user_dto import UserDTO
+
 
 
 class User(Document):
@@ -43,9 +46,9 @@ class User(Document):
             is_active=user_create.is_active,
             roles=user_create.roles,
             created_by="system",
-            created_date=datetime.now(timezone.utc),
+            created_date=datetime.now().isoformat(),
             last_updated_by="system",
-            last_updated_date=datetime.now(timezone.utc)
+            last_updated_date=datetime.now().isoformat(),
         )
 
     @staticmethod

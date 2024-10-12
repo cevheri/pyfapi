@@ -17,12 +17,11 @@ class UserRepository:
         log.debug(f"UserRepository User retrieved: {result.username}")
         return result
 
-    # list user from query parameters like /users?username=john_doe
-    async def list(self, query: dict = None, page: int = 0, limit: int = 10) -> List[User]:
-        log.debug(f"UserRepository Listing users with query: {query}, page: {page}, limit: {limit}")
-        result = await User.find_many(query, skip=page, limit=limit)
-        log.debug(f"UserRepository Users retrieved: {result.count()}")
-        return result.to_list()
+    async def list(self, query: dict = None, page: int = 0, limit: int = 10):
+        log.debug(f"UserRepository list with query: {query}, page: {page}, limit: {limit}")
+        result = await User.all().to_list()
+        log.debug(f"UserRepository Users retrieved")
+        return result
 
     # mongodb update when user field is not null if user field is null, it will not update
     async def update(self, user_id: str, user: User) -> User | None:
