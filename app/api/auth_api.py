@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body
 
 from app.security.auth_config import sign_jwt
-from app.pass_util import PasswordUtil
+from app.utils.pass_util import PasswordUtil
 import logging as log
 
 from app.api.vm.login_vm import LoginVM

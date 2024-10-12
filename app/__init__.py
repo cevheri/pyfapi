@@ -1,21 +1,18 @@
-import logging as log
+import logging
 from app.config.app_settings import log_settings, db_settings
 from app.config.db_config import init_db
 
-print("__init__.py is running")
+print("app.__init__.py is running")
 
-#region logger configuration
+# region logger configuration
 print("logger configuration")
-log.basicConfig(level=log_settings.LOG_LEVEL,
-                format=log_settings.LOG_FORMAT,
-                handlers=[log.FileHandler(log_settings.LOG_FILE),log.StreamHandler()])
-log = log.getLogger(__name__)
-#endregion logger configuration
+logging.basicConfig(level=log_settings.LOG_LEVEL,
+                    format=log_settings.LOG_FORMAT,
+                    handlers=[logging.FileHandler(log_settings.LOG_FILE), logging.StreamHandler()])
+logging.getLogger('pymongo').setLevel(logging.INFO)
+log = logging.getLogger(__name__)
+# endregion logger configuration
 
 
-
-print("logging application started")
+print("logger configured")
 log.info("PyFAPI Application started")
-
-
-

@@ -2,8 +2,7 @@ import logging as log
 
 from app.api.vm.change_password_vm import ChangePasswordVM
 from app.entity.user_entity import User
-from app.pass_util import PasswordUtil
-from app.schema.user_dto import UserDTO
+from app.utils.pass_util import PasswordUtil
 from app.security.security_utils import SecurityUtils
 
 

@@ -5,9 +5,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import init_db
+from app.api import user_api, auth_api
 from app.config.app_settings import cors_settings
 
-from app.api import user_api, auth_api
+print("app.main.py is running")
 
 
 @asynccontextmanager
@@ -36,7 +37,7 @@ app.add_middleware(
     allow_headers=cors_settings.ALLOWED_HEADERS
 )
 
-app.include_router(user_api.router, tags=["users"])#, dependencies=[Depends(JWTBearer())])
+app.include_router(user_api.router, tags=["users"])  # , dependencies=[Depends(JWTBearer())])
 app.include_router(auth_api.router, tags=["auth"])
 
 
