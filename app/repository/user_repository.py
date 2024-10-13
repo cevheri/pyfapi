@@ -21,6 +21,7 @@ class UserRepository:
         return result
 
     async def list(self, query:str, page, limit, sort) -> List[User]:
+
         # set defaults if not provided. defaults are page=0, limit=10, sort=["+_id"] and should be set in environment or config or constants
         if query is None:
             query = {}
