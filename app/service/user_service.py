@@ -1,8 +1,7 @@
 import logging
 import uuid
 
-from app.api.vm.user_create import UserCreate
-from app.api.vm.user_update import UserUpdate
+from app.api.vm.user_vm import UserCreate, UserUpdate
 from app.entity.user_entity import User
 from app.repository.user_repository import UserRepository
 from app.utils.pass_util import PasswordUtil
@@ -41,9 +40,9 @@ class UserService:
         log.debug(f"UserService User retrieved")
         return result
 
-    async def list(self, query: dict, page: int, limit: int):
-        log.debug(f"UserService list with query: {query}, page: {page}, limit: {limit}")
-        result = await self.user_repository.list(query, page, limit)
+    async def list(self, query, page, limit, sort) -> list[User]:
+        log.debug(f"UserService list with query: {query}, page: {page}, limit: {limit}, sort: {sort}")
+        result = await self.user_repository.list(query, page, limit, sort)
         log.debug(f"UserService Users retrieved")
         return result
 

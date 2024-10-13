@@ -4,7 +4,7 @@ from app.security.auth_config import sign_jwt
 from app.utils.pass_util import PasswordUtil
 import logging
 
-from app.api.vm.login_vm import LoginVM
+from app.api.vm.account_vm import LoginVM
 from app.config.app_settings import server_settings
 from app.service.user_service import UserService
 

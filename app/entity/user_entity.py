@@ -3,8 +3,7 @@ from typing import Optional
 
 from beanie import Document
 
-from app.api.vm.user_create import UserCreate
-from app.api.vm.user_update import UserUpdate
+from app.api.vm.user_vm import UserCreate, UserUpdate
 from app.schema.user_dto import UserDTO
 
 

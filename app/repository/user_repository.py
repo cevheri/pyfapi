@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import List
 
@@ -19,15 +20,26 @@ class UserRepository:
         log.debug(f"UserRepository User retrieved: {result.username}")
         return result
 
-    async def list(self, query: dict = None, page: int = 0, limit: int = 10, sort=None) -> List[User]:
+    async def list(self, query:str, page, limit, sort) -> List[User]:
+        # set defaults if not provided. defaults are page=0, limit=10, sort=["+_id"] and should be set in environment or config or constants
+        if query is None:
+            query = {}
+        else:
+            query = json.loads(query)
+
+        if page is None:
+            page = 0
+        if limit is None:
+            limit = 10
         if sort is None:
-            sort = {"_id": 1}
+            sort = ["+_id"]
+
         log.debug(f"UserRepository list with query: {query}, page: {page}, limit: {limit}, sort: {sort}")
-        result = await User.find(query, skip=page, limit=limit).to_list()
+
+        result = await User.find(query).skip(page).limit(limit).sort(sort).to_list()
         log.debug(f"UserRepository Users retrieved")
         return result
 
-    # mongodb update when user field is not null if user field is null, it will not update
     async def update(self, user_id: str, user: User) -> User | None:
         log.debug(f"UserRepository Updating user: {user_id}")
         # update with merge patch
