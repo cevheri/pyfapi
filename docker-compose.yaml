@@ -16,7 +16,7 @@ services:
       - pyfapi-app-network
 
   mongodb:
-    image: mongo
+    image: mongo:8.0
     container_name: mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -29,7 +29,7 @@ services:
       - pyfapi-app-network
 
   mongo-express:
-    image: mongo-express
+    image: mongo-express:1.0.2
     container_name: mongo-express
     ports:
       - "8081:8081"
