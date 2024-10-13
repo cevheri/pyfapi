@@ -104,9 +104,9 @@ docker-compose up --build
 
 ### Access the application
 
-- Open your browser and go to root url `http://localhost:8000` to access the FastAPI application.
-- Open your browser and go to `http://localhost:8000/api/v1/docs` to access the Swagger UI.
-- Open your browser and go to `http://localhost:8081` to access the MongoDB Express.
+- Open your browser and go to root url http://localhost:8000 to access the FastAPI application.
+- Open your browser and go to http://localhost:8000/api/v1/docs to access the Swagger UI.
+- Open your browser and go to http://localhost:8081 to access the MongoDB Express.
 
 ## Folder Structure
 
