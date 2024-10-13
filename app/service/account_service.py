@@ -2,7 +2,6 @@ import logging
 
 from app.api.vm.account_vm import ChangePasswordVM
 from app.schema.user_dto import UserDTO
-from app.security.security_utils import SecurityUtils
 from app.service.user_service import UserService
 from app.utils.pass_util import PasswordUtil
 
@@ -16,7 +15,7 @@ class AccountService:
 
     async def get_account(self) -> UserDTO | None:
         log.debug(f"AccountService Getting account")
-        username = SecurityUtils.get_current_username()
+        username = "admin"  # SecurityUtils.get_current_username()
         if username is None:
             log.error(f"AccountService User not found")
             return None
@@ -28,13 +27,13 @@ class AccountService:
         log.debug(f"AccountService User found: {result}")
         return result
 
-    def change_password(self, change_password: ChangePasswordVM) -> bool:
+    async def change_password(self, change_password: ChangePasswordVM) -> bool:
         log.debug(f"AccountService Changing password")
-        username = SecurityUtils.get_current_username()
+        username = "admin"  # SecurityUtils.get_current_username()
         if username is None:
             log.error(f"AccountService User not found")
             return False
-        user = self.user_service.retrieve_by_username(username)
+        user = await self.user_service.retrieve_by_username(username)
         if user is None:
             log.error(f"AccountService User not found")
             return False
@@ -44,6 +43,6 @@ class AccountService:
             return False
 
         user.password = PasswordUtil().hash_password(password=change_password.new_password)
-        result = self.user_service.update(user.user_id, user)
+        result = await self.user_service.update(user.user_id, user)
         log.debug(f"AccountService Password changed for user: {result.username}")
         return True

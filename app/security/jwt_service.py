@@ -1,12 +1,8 @@
 import logging
 
+from app.security.auth_config import decode_jwt
+from app.security.jwt_token import JWTToken
+
 log = logging.getLogger(__name__)
 
 
-class JWTToken:
-    def __init__(self, id_token: str):
-        self.id_token = id_token
-
-
-class JWTService:
-    pass

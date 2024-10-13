@@ -15,7 +15,6 @@ print("app.main.py is running")
 log = logging.getLogger(__name__)
 
 
-
 @asynccontextmanager
 async def lifespan(_):
     log.debug("FastAPI Lifespan started")
@@ -46,7 +45,6 @@ app.add_middleware(
 app.include_router(auth_api.router, tags=["auth"])
 app.include_router(account_api.router, tags=["account"], dependencies=[Depends(JWTBearer())])
 app.include_router(user_api.router, tags=["users"], dependencies=[Depends(JWTBearer())])
-
 
 
 @app.get("/")

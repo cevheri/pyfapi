@@ -17,6 +17,6 @@ class JWTSettings(BaseSettings):
     """
     model_config = SettingsConfigDict(env_prefix="JWT_")
 
-    JWT_ALGORITHM: str = "HS256"
-    JWT_SECRET_KEY: str = "change_this_secret_key_on_env_file"
-    JWT_EXPIRATION: int = 3600
+    ALGORITHM: str = "HS256"
+    SECRET_KEY: str = "change_this_secret_key_on_env_file"
+    EXPIRATION: int = 3600
