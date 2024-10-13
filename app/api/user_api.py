@@ -13,7 +13,7 @@ user_service = UserService()
 log = logging.getLogger(__name__)
 
 
-@router.post("/users", response_model=ApiResponse)
+@router.post("/users", response_model=UserDTO)
 async def create_user(user_create_data: UserCreate) -> ApiResponse:
     """
     Create a new user with the provided user data.
@@ -25,24 +25,58 @@ async def create_user(user_create_data: UserCreate) -> ApiResponse:
     """
 
     log.debug(f"UserApi Creating user: {user_create_data}")
-    result = await user_service.create(user_create_data)
-    log.debug(f"UserApi User created: {result.username}")
-    return ApiResponse(success=True, message="User created successfully", data=result.dict())
+    user = await user_service.create(user_create_data)
+    if user is None:
+        log.error(f"UserApi User not created")
+        raise HTTPException(status_code=400, detail="User not created")
+    result = UserDTO.from_entity(user)
+    log.debug(f"UserApi User created: {result}")
+    return result
 
 
-@router.get("/users/{user_id}", response_model=ApiResponse)
-async def retrieve_user(user_id: str) -> ApiResponse:
+@router.get("/users/{user_id}", response_model=UserDTO)
+async def retrieve_user(user_id: str):
+    """
+    Retrieve user by user id.
+
+    **user_id**: User id of the user to retrieve.
+    **return**: User details.
+
+    The endpoint retrieves the user by user id and returns the user details.
+    """
     log.debug(f"UserApi Retrieving user: {user_id}")
-    result = await user_service.retrieve(user_id)
-    if result is None:
+    user = await user_service.retrieve(user_id)
+    if user is None:
         log.error(f"AccountApi Account not found")
-        raise HTTPException(status_code=404, detail="Account not found")
+        raise HTTPException(status_code=404, detail="User not found")
+    result = UserDTO.from_entity(user)
     log.debug(f"UserApi User retrieved: {result}")
-    return ApiResponse(success=True, message="User retrieved successfully", data=result.dict())
+    return result
+
+
+@router.get("/users/username/{username}", response_model=UserDTO)
+async def retrieve_user_by_username(username: str):
+    """
+    Retrieve user by username.
+
+    **username**: Username of the user to retrieve.
+    **return**: User details.
+
+    The endpoint retrieves the user by username and returns the user details.
+    """
+
+    log.debug(f"UserApi Retrieving user by username: {username}")
+    user = await user_service.retrieve_by_username(username)
+    if user is None:
+        log.error(f"UserApi User not found")
+        raise HTTPException(status_code=404, detail="User not found")
+    result = UserDTO.from_entity(user)
+    log.debug(f"UserApi User retrieved: {result}")
+    return result
 
 
 @router.get("/users", response_model=list[UserDTO], response_model_exclude_unset=True)
-async def list_users(query: str=None, page: int=0, limit: int=10, sort='+_id') -> list[UserDTO]:
+async def list_users(query: str = None, page: int = 0, limit: int = 10, sort='+_id') -> list[UserDTO]:
     """
     List and filter users with the provided query, page, limit, and sort.
 
@@ -63,17 +97,21 @@ async def list_users(query: str=None, page: int=0, limit: int=10, sort='+_id') -
     return result
 
 
-@router.put("/users/{user_id}", response_model=ApiResponse)
-async def update_user(user_id: str, user: UserUpdate) -> ApiResponse:
+@router.put("/users/{user_id}", response_model=UserDTO)
+async def update_user(user_id: str, user: UserUpdate):
     log.debug(f"UserApi Updating user: {user_id}")
-    result = await user_service.update(user_id, user)
+    user = await user_service.update(user_id, user)
+    if user is None:
+        log.error(f"UserApi User not updated")
+        raise HTTPException(status_code=400, detail="User not updated")
+    result = UserDTO.from_entity(user)
     log.debug(f"UserApi User updated: {result}")
-    return ApiResponse(success=True, message="User updated successfully", data=result.dict())
+    return result
 
 
-@router.delete("/users/{user_id}", response_model=ApiResponse)
-async def delete_user(user_id: str) -> ApiResponse:
+@router.delete("/users/{user_id}", response_model=UserDTO)
+async def delete_user(user_id: str):
     log.debug(f"UserApi Deleting user: {user_id}")
     result = await user_service.delete(user_id)
     log.debug(f"UserApi User deleted: {result}")
-    return ApiResponse(success=True, message="User deleted successfully", data=result)
+    return result
