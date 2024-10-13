@@ -67,11 +67,11 @@ class UserRepository:
     async def retrieve_by_email(self, email: str) -> User | None:
         log.debug(f"UserRepository Retrieving user by email: {email}")
         result = await User.find_one(User.email == email)
-        log.debug(f"UserRepository User retrieved: {result.username}")
+        log.debug(f"UserRepository User retrieved")
         return result
 
     async def retrieve_by_username(self, username: str) -> User | None:
         log.debug(f"UserRepository Retrieving user by username: {username}")
         result = await User.find_one(User.username == username)
-        log.debug(f"UserRepository User retrieved: {result.username}")
+        log.debug(f"UserRepository User retrieved")
         return result

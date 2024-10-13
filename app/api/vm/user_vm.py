@@ -26,6 +26,11 @@ class UserCreate(BaseModel):
             }
         }
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
 
 class UserUpdate(BaseModel):
     """User Update schema"""

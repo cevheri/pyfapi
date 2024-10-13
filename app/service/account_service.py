@@ -1,30 +1,32 @@
 import logging
 
-from app.api.vm.change_password_vm import ChangePasswordVM
-from app.entity.user_entity import User
+from app.api.vm.account_vm import ChangePasswordVM
+from app.schema.user_dto import UserDTO
 from app.security.security_utils import SecurityUtils
+from app.service.user_service import UserService
 from app.utils.pass_util import PasswordUtil
 
 log = logging.getLogger(__name__)
 
 
 class AccountService:
-    def __init__(self, user_service):
+    def __init__(self):
         log.info(f"AccountService Initializing")
-        self.user_service = user_service
+        self.user_service = UserService()
 
-    def get_account(self) -> User | None:
+    async def get_account(self) -> UserDTO | None:
         log.debug(f"AccountService Getting account")
         username = SecurityUtils.get_current_username()
         if username is None:
             log.error(f"AccountService User not found")
             return None
-        user = self.user_service.retrieve_by_username(username)
+        user = await self.user_service.retrieve_by_username(username)
         if user is None:
             log.error(f"AccountService User not found")
             return None
-        log.debug(f"AccountService User found: {user}")
-        return user
+        result = UserDTO.from_entity(user)
+        log.debug(f"AccountService User found: {result}")
+        return result
 
     def change_password(self, change_password: ChangePasswordVM) -> bool:
         log.debug(f"AccountService Changing password")

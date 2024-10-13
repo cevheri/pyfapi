@@ -67,6 +67,7 @@ class User(Document):
     def from_dto(user_dto: UserDTO):
         return User(
             user_id=user_dto.user_id,
+            username=user_dto.username,
             first_name=user_dto.first_name,
             last_name=user_dto.last_name,
             email=user_dto.email,
@@ -79,4 +80,4 @@ class User(Document):
         )
 
     def __str__(self):
-        return f"User: {self.user_id}, {self.first_name} {self.last_name}, {self.email}, {self.is_active}, {self.roles}"
+        return f"User: {self.user_id}, {self.username}, {self.first_name} {self.last_name}, {self.email}, {self.is_active}, {self.roles}"

@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from app.api.vm.api_response import ApiResponse
 from app.api.vm.user_vm import UserCreate, UserUpdate
@@ -34,6 +34,9 @@ async def create_user(user_create_data: UserCreate) -> ApiResponse:
 async def retrieve_user(user_id: str) -> ApiResponse:
     log.debug(f"UserApi Retrieving user: {user_id}")
     result = await user_service.retrieve(user_id)
+    if result is None:
+        log.error(f"AccountApi Account not found")
+        raise HTTPException(status_code=404, detail="Account not found")
     log.debug(f"UserApi User retrieved: {result}")
     return ApiResponse(success=True, message="User retrieved successfully", data=result.dict())
 
