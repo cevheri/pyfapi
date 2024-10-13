@@ -1,9 +1,11 @@
-import logging as log
+import logging
 
 from app.api.vm.change_password_vm import ChangePasswordVM
 from app.entity.user_entity import User
-from app.utils.pass_util import PasswordUtil
 from app.security.security_utils import SecurityUtils
+from app.utils.pass_util import PasswordUtil
+
+log = logging.getLogger(__name__)
 
 
 class AccountService:

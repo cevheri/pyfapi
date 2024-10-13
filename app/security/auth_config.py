@@ -1,13 +1,15 @@
-from fastapi import Request, HTTPException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic_settings import BaseSettings
+import logging
 import time
 from typing import Dict
 
 import jwt
+from fastapi import Request, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from pydantic_settings import BaseSettings
 
 from app.entity import User
 
+log = logging.getLogger(__name__)
 
 class AuthSettings(BaseSettings):
     secret_key: str = "secret_key"

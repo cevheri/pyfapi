@@ -1,4 +1,4 @@
-import logging as log
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -9,6 +9,8 @@ from app.api import user_api, auth_api
 from app.config.app_settings import cors_settings
 
 print("app.main.py is running")
+
+log = logging.getLogger(__name__)
 
 
 @asynccontextmanager

@@ -1,7 +1,9 @@
-import logging as log
+import logging
 from typing import List
 
 from app.entity.user_entity import User
+
+log = logging.getLogger(__name__)
 
 
 class UserRepository:
@@ -17,9 +19,11 @@ class UserRepository:
         log.debug(f"UserRepository User retrieved: {result.username}")
         return result
 
-    async def list(self, query: dict = None, page: int = 0, limit: int = 10):
-        log.debug(f"UserRepository list with query: {query}, page: {page}, limit: {limit}")
-        result = await User.all().to_list()
+    async def list(self, query: dict = None, page: int = 0, limit: int = 10, sort=None) -> List[User]:
+        if sort is None:
+            sort = {"_id": 1}
+        log.debug(f"UserRepository list with query: {query}, page: {page}, limit: {limit}, sort: {sort}")
+        result = await User.find(query, skip=page, limit=limit).to_list()
         log.debug(f"UserRepository Users retrieved")
         return result
 

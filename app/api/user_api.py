@@ -3,7 +3,7 @@ from http import HTTPStatus
 from typing import Optional
 
 from fastapi import APIRouter, Body
-import logging as log
+import logging
 
 from fastapi.openapi.models import Response
 
@@ -25,6 +25,7 @@ from bson import ObjectId
 
 router = APIRouter(prefix=server_settings.CONTEXT_PATH, tags=["users"])
 user_service = UserService()
+log = logging.getLogger(__name__)
 
 
 @router.post("/users", response_model=ApiResponse)

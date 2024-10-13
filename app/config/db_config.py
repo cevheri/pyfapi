@@ -1,13 +1,17 @@
 # Database Configuration
+import logging
+
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic_settings import BaseSettings, SettingsConfigDict
-import logging as log
 
 from app import entity
 
+log = logging.getLogger(__name__)
 
-class DatabaseSettings(BaseSettings):  # , cli_parse_args=True for dev or prod environments like uvicorn run app:app --host "" --port 8080 --profile dev
+
+class DatabaseSettings(
+    BaseSettings):  # , cli_parse_args=True for dev or prod environments like uvicorn run app:app --host "" --port 8080 --profile dev
     """
     Database settings
 
@@ -37,5 +41,3 @@ async def init_db():
     db = client[DatabaseSettings().DATABASE_NAME]
 
     await init_beanie(database=db, document_models=[entity.User, entity.Role])
-
-

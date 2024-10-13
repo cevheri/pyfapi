@@ -1,15 +1,11 @@
-import uuid
 from datetime import datetime, timezone
 from typing import Optional
 
 from beanie import Document
-from beanie import PydanticObjectId
-from bson import ObjectId
 
 from app.api.vm.user_create import UserCreate
 from app.api.vm.user_update import UserUpdate
 from app.schema.user_dto import UserDTO
-
 
 
 class User(Document):

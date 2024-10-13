@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body
 
 from app.security.auth_config import sign_jwt
 from app.utils.pass_util import PasswordUtil
-import logging as log
+import logging
 
 from app.api.vm.login_vm import LoginVM
 from app.config.app_settings import server_settings
@@ -10,6 +10,8 @@ from app.service.user_service import UserService
 
 router = APIRouter(prefix=server_settings.CONTEXT_PATH, tags=["auth"])
 user_service = UserService()
+log = logging.getLogger(__name__)
+
 
 @router.post("/authenticate")
 async def authenticate(login: LoginVM = Body(...)):
@@ -20,7 +22,7 @@ async def authenticate(login: LoginVM = Body(...)):
         return {"success": False, "message": "Incorrect email or password"}
     if not PasswordUtil().verify_password(login.password, user.hashed_password):
         log.info(f"AuthAPI Password not matched: {login.username}")
-        return {"success": False, "message": "Incorrect email or password" }
+        return {"success": False, "message": "Incorrect email or password"}
 
     result = sign_jwt(user)
     log.debug(f"AuthAPI User authenticated with token: {result}")

@@ -1,31 +1,36 @@
-import logging as log
+import logging
 import uuid
-
-from passlib.context import CryptContext
 
 from app.api.vm.user_create import UserCreate
 from app.api.vm.user_update import UserUpdate
 from app.entity.user_entity import User
 from app.repository.user_repository import UserRepository
+from app.utils.pass_util import PasswordUtil
 
-user_repository = UserRepository()
+log = logging.getLogger(__name__)
 
 
 class UserService:
+    """
+    User Business Logic Service that is responsible for handling business logic for User entity operations.
+
+    Attributes:
+    user_repository: UserRepository
+        Repository for User entity operations
+
+    """
+
     def __init__(self):
         log.info(f"UserService Initializing")
-        self.user_repository = user_repository
-        self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+        self.user_repository = UserRepository()
 
-    async def create(self, user_create: UserCreate | User) -> User:
+    async def create(self, user_create: UserCreate) -> User:
         log.debug(f"UserService Creating user: {user_create} with: {type(user_create)}")
-        if isinstance(user_create, UserCreate):
-            user = User.from_create(user_create)
-            user.hashed_password = self.pwd_context.hash(user_create.password)
-        else:
-            user = user_create
 
+        user = User.from_create(user_create)
         user.user_id = str(uuid.uuid4())
+        user.hashed_password = PasswordUtil().hash_password(user_create.password)
+
         result = await self.user_repository.create(user)
         log.debug(f"UserService User created: {result.user_id}")
         return result
@@ -33,7 +38,7 @@ class UserService:
     async def retrieve(self, user_id: str) -> User | None:
         log.debug(f"UserService Retrieving user: {user_id}")
         result = await self.user_repository.retrieve(user_id)
-        log.debug(f"UserService User retrieved: {result}")
+        log.debug(f"UserService User retrieved")
         return result
 
     async def list(self, query: dict, page: int, limit: int):
@@ -49,13 +54,13 @@ class UserService:
         else:
             user = user_update
         result = await self.user_repository.update(user_id, user)
-        log.debug(f"UserService User updated: {result}")
+        log.debug(f"UserService User updated")
         return result
 
     async def delete(self, user_id: str):
         log.debug(f"UserService Deleting user: {user_id}")
         result = await self.user_repository.delete(user_id)
-        log.debug(f"UserService User deleted: {result}")
+        log.debug(f"UserService User deleted")
         return result
 
     async def count(self, query: dict) -> int:
