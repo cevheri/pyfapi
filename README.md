@@ -1,4 +1,5 @@
-# FastAPI MongoDB CRUD Application end-to-end example
+# PyFApi 
+Python FastAPI MongoDB CRUD Application end-to-end example
 
 ## Overview
 
@@ -131,5 +132,12 @@ This FastAPI MongoDB application is structured to provide a robust and scalable 
 
 Feel free to contribute to this project by submitting issues or pull requests!
 
-## License
+## References
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [FastAPI & MongoDB - the full guide](https://github.com/fastapi/fastapi/discussions/9074)
+- [Build a Cocktail API with Beanie and MongoDB](https://www.mongodb.com/developer/languages/python/beanie-odm-fastapi-cocktails//)
+- [Pydantic](https://docs.pydantic.dev/dev/)
+- [Motor](https://motor.readthedocs.io/en/stable/tutorial-asyncio.html)
+- [Beanie Tutorial](https://beanie-odm.dev/getting-started/)
+- 
 
