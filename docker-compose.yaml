@@ -1,0 +1,55 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pyfapi
+    env_file:
+      - .env.dev
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    volumes:
+      - pyfapi_data:/app
+    networks:
+      - pyfapi-app-network
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root123
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - pyfapi-app-network
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root123
+      ME_CONFIG_MONGODB_URL: mongodb://root:root123@mongodb:27017/
+      ME_CONFIG_BASICAUTH_ENABLED: true
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    volumes:
+      - mongo_express_data:/data/db
+    networks:
+      - pyfapi-app-network
+
+volumes:
+  pyfapi_data:
+  mongodb_data:
+  mongo_express_data:
+
+networks:
+  pyfapi-app-network:
+    driver: bridge
