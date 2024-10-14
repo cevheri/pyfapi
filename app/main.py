@@ -7,19 +7,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import init_db
 from app.api import user_api, auth_api, account_api
 from app.config.app_settings import cors_settings, server_settings
-from app.migration.migration_000 import init_migration
-from app.security.auth_config import JWTBearer
+from app.jwt import auth_handler
+from app.migration import user_migration
 
 print("app.main.py is running")
 
 log = logging.getLogger(__name__)
 
 
+
 @asynccontextmanager
 async def lifespan(_):
     log.debug("FastAPI Lifespan started")
     await init_db()
-    await init_migration()
+    await user_migration.init_migration()
     yield
 
 
@@ -43,8 +44,8 @@ app.add_middleware(
 )
 
 app.include_router(auth_api.router, tags=["auth"])
-app.include_router(account_api.router, tags=["account"], dependencies=[Depends(JWTBearer())])
-app.include_router(user_api.router, tags=["users"], dependencies=[Depends(JWTBearer())])
+app.include_router(account_api.router, tags=["account"], dependencies=[Depends(auth_handler.get_current_user)])
+app.include_router(user_api.router, tags=["users"], dependencies=[Depends(auth_handler.get_current_user)])
 
 
 @app.get("/")

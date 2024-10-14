@@ -1,13 +1,21 @@
 import json
 import logging
-from typing import List
+from typing import List, Optional
+
+from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.entity.user_entity import User
+from app.config.app_settings import db_settings
 
 log = logging.getLogger(__name__)
 
 
 class UserRepository:
+
+    def __init__(self, db_client: AsyncIOMotorClient):
+        self.db_client = db_client
+        self.collection = self.db_client.get_database(db_settings.DATABASE_NAME).get_collection(User.get_collection_name())
+
     async def create(self, user: User) -> User:
         log.debug(f"UserRepository Creating user: {user}")
         result = await user.create()
@@ -20,7 +28,7 @@ class UserRepository:
         log.debug(f"UserRepository User retrieved: {result.username}")
         return result
 
-    async def list(self, query:str, page, limit, sort) -> List[User]:
+    async def list(self, query: str, page, limit, sort) -> List[User]:
 
         # set defaults if not provided. defaults are page=0, limit=10, sort=["+_id"] and should be set in environment or config or constants
         if query is None:
@@ -64,13 +72,13 @@ class UserRepository:
         log.debug(f"UserRepository Users counted: {result.username}")
         return result
 
-    async def retrieve_by_email(self, email: str) -> User | None:
+    async def get_user_by_email(self, email: str) -> Optional[User]:
         log.debug(f"UserRepository Retrieving user by email: {email}")
         result = await User.find_one(User.email == email)
         log.debug(f"UserRepository User retrieved")
         return result
 
-    async def retrieve_by_username(self, username: str) -> User | None:
+    async def get_user_by_username(self, username: str) -> Optional[User]:
         log.debug(f"UserRepository Retrieving user by username: {username}")
         result = await User.find_one(User.username == username)
         log.debug(f"UserRepository User retrieved")

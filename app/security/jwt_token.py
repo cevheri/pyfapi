@@ -1,17 +1,23 @@
-from pydantic import BaseModel
+
+
+from pydantic import BaseModel, Field
 
 
 class JWTToken(BaseModel):
-    username: str
-    roles: list[str]
-    expires: float
-    token: str
+    user_id: str = Field(alias="user_id")
+    username: str = Field(alias="sub")
+    email: str = Field(alias="email")
+    roles: list[str] = Field(alias="scopes")
+    expires: float = Field(alias="exp")
+    token: str = Field(alias="token")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.username = kwargs.get("username")
-        self.roles = kwargs.get("roles")
-        self.expires = kwargs.get("expires")
+        self.user_id = kwargs.get("user_id")
+        self.username = kwargs.get("sub")
+        self.email = kwargs.get("email")
+        self.roles = kwargs.get("scopes")
+        self.expires = kwargs.get("exp")
         self.token = kwargs.get("token")
 
     @staticmethod

@@ -1,25 +1,29 @@
 from datetime import datetime
+from typing import Optional
 
-from pydantic import BaseModel, validator, field_validator
+from pydantic import BaseModel, validator, field_validator, Field, EmailStr, ConfigDict
+from typing_extensions import deprecated
 
 
 class UserDTO(BaseModel):
-    user_id: str
-    username: str
-    first_name: str
-    last_name: str
-    email: str
-    is_active: bool
-    roles: list[str]
-    created_by: str
-    created_date: datetime
-    last_updated_by: str
-    last_updated_date: datetime
+    user_id: str = Field(..., alias="user_id", min_length=1, max_length=50, title="User ID", description="Unique Identifier of the record")
+    username: str = Field(..., alias="username", min_length=1, max_length=50, title="Username", description="username for login")
+    first_name: str = Field(..., alias="first_name", min_length=1, max_length=100, title="First Name", description="First Name")
+    last_name: str = Field(..., alias="last_name", min_length=1, max_length=100, title="Last Name", description="Last Name")
+    email: EmailStr = Field(..., alias="email", title="Email", description="Email Address")
+    is_active: bool = Field(..., alias="is_active", title="Is Active", description="Record is active or not")
+    roles: list[str] = Field(..., alias="roles", title="Roles", description="List of roles")
+    created_by: str = Field(..., alias="created_by", min_length=1, max_length=50, title="Created By", description="Created By of the record")
+    created_date: datetime = Field(..., alias="created_date", title="Created Date", description="Created Date of the record")
+    last_updated_by: str = Field(..., alias="last_updated_by", min_length=1, max_length=50, title="Last Updated By", description="Last Updated By of the record")
+    last_updated_date: datetime = Field(..., alias="last_updated_date", title="Last Updated Date", description="Last Updated Date of the record")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        from_attributes=True,
+        title="User DTO",
+        json_schema_extra={
             "example": {
-                "user_id": "1",
+                "user_id": "41ef9c67-f312-4b8f-9694-1ee1cf414c97",
                 "username": "john_doe",
                 "first_name": "John",
                 "last_name": "Doe",
@@ -30,59 +34,62 @@ class UserDTO(BaseModel):
                 "created_date": "2021-01-01T00:00:00",
                 "last_updated_by": "admin",
                 "last_updated_date": "2021-01-01T00:00:00"
-            }
-        }
+            }})
 
-    # def to_dict(self)-> dict:
-    #     return {
-    #         "user_id": self.user_id,
-    #         "username": self.username,
-    #         "first_name": self.first_name,
-    #         "last_name": self.last_name,
-    #         "email": self.email,
-    #         "is_active": self.is_active,
-    #         "roles": self.roles,
-    #         "created_by": self.created_by,
-    #         "created_date": self.created_date.isoformat(),
-    #         "last_updated_by": self.last_updated_by,
-    #         "last_updated_date": self.last_updated_date.isoformat()
-    #     }
-
-    def __init__(self , **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    @staticmethod
-    def from_entity(user):
-        return UserDTO(
-            user_id=user.user_id,
-            username=user.username,
-            first_name=user.first_name,
-            last_name=user.last_name,
-            email=user.email,
-            is_active=user.is_active,
-            roles=user.roles,
-            created_by=user.created_by,
-            created_date=user.created_date,
-            last_updated_by=user.last_updated_by,
-            last_updated_date=user.last_updated_date
-        )
+class UserCreate(BaseModel):
+    """UserCreate schema"""
+    username: str = Field(..., alias="username", min_length=1, max_length=50, title="Username", description="username for login")
+    first_name: str = Field(..., alias="first_name", min_length=1, max_length=100, title="First Name", description="First Name")
+    last_name: str = Field(..., alias="last_name", min_length=1, max_length=100, title="Last Name", description="Last Name")
+    email: EmailStr = Field(..., alias="email", title="Email", description="Email Address")
+    password: str = Field(..., alias="password", min_length=1, max_length=50, title="Password", description="Password")
+    is_active: bool = Field(..., alias="is_active", title="Is Active", description="Record is active or not")
+    roles: list[str] = Field(..., alias="roles", title="Roles", description="List of roles")
 
-    @staticmethod
-    def from_entities(users):
-        return [UserDTO.from_entity(user) for user in users]
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "username": "john_doe",
+                "first_name": "John",
+                "last_name": "Doe",
+                "email": "john@doe.com",
+                "password": "plain-text-password",
+                "is_active": True,
+                "roles": ["admin", "user"]
+            }
+        }
 
-    # @classmethod
-    # @field_validator("created_date")
-    # def validate_created_date(self, value):
-    #     if not value:
-    #         return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
-    #     return value
-    #
-    # @classmethod
-    # @field_validator("last_updated_date")
-    # def validate_last_updated_date(cls, value):
-    #     if not value:
-    #         return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
-    #     return value
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+
+class UserUpdate(BaseModel):
+    """User Update schema"""
+    first_name: Optional[str] = Field(None, alias="first_name", min_length=1, max_length=100, title="First Name", description="First Name")
+    last_name: Optional[str] = Field(None, alias="last_name", min_length=1, max_length=100, title="Last Name", description="Last Name")
+    email: Optional[EmailStr] = Field(None, alias="email", title="Email", description="Email Address")
+    is_active: Optional[bool] = Field(None, alias="is_active", title="Is Active", description="Record is active or not")
+    roles: Optional[list[str]] = Field(None, alias="roles", title="Roles", description="List of roles")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "first_name": "John",
+                "last_name": "Doe",
+                "email": "john@doe.com",
+                "is_active": True,
+                "roles": ["admin", "user"]
+            }
+        }
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        for k, v in kwargs.items():
+            setattr(self, k, v)

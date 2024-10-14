@@ -1,7 +1,10 @@
 import logging
 import uuid
+from typing import Optional
 
-from app.api.vm.user_vm import UserCreate, UserUpdate
+from fastapi import Depends
+
+from app.schema.user_dto import UserDTO, UserCreate, UserUpdate
 from app.entity.user_entity import User
 from app.repository.user_repository import UserRepository
 from app.utils.pass_util import PasswordUtil
@@ -19,44 +22,54 @@ class UserService:
 
     """
 
-    def __init__(self):
+    def __init__(self, user_repository: UserRepository = Depends()):
         log.info(f"UserService Initializing")
-        self.user_repository = UserRepository()
+        self.user_repository = user_repository
 
-    async def create(self, user_create: UserCreate) -> User:
+    async def create(self, user_create: UserCreate) -> UserDTO:
         log.debug(f"UserService Creating user: {user_create} with: {type(user_create)}")
 
         user = User.from_create(user_create)
         user.user_id = str(uuid.uuid4())
         user.hashed_password = PasswordUtil().hash_password(user_create.password)
 
-        result = await self.user_repository.create(user)
+        final_user = await self.user_repository.create(user)
+        result = UserDTO.model_validate(final_user)
         log.debug(f"UserService User created: {result.user_id}")
         return result
 
-    async def retrieve(self, user_id: str) -> User | None:
+    async def retrieve(self, user_id: str) -> Optional[UserDTO]:
         log.debug(f"UserService Retrieving user: {user_id}")
-        result = await self.user_repository.retrieve(user_id)
+        final_user = await self.user_repository.retrieve(user_id)
+        if final_user is None:
+            log.error(f"UserService User not found")
+            return None
+        result = UserDTO.model_validate(final_user)
         log.debug(f"UserService User retrieved")
         return result
 
-    async def list(self, query, page, limit, sort) -> list[User]:
+    async def list(self, query, page, limit, sort) -> Optional[list[UserDTO]]:
         log.debug(f"UserService list with query: {query}, page: {page}, limit: {limit}, sort: {sort}")
-        result = await self.user_repository.list(query, page, limit, sort)
+        final_users = await self.user_repository.list(query, page, limit, sort)
+        if final_users is None:
+            log.error(f"UserService Users not found")
+            return None
+        result = [UserDTO.model_validate(user) for user in final_users]
         log.debug(f"UserService Users retrieved")
         return result
 
-    async def update(self, user_id: str, user_update: UserUpdate | User) -> User:
+    async def update(self, user_id: str, user_update: UserUpdate | User) -> UserDTO:
         log.debug(f"UserService Updating user: {user_id} with: {type(user_update)}")
         if isinstance(user_update, UserUpdate):
             user = User.from_update(user_update)
         else:
             user = user_update
-        result = await self.user_repository.update(user_id, user)
+        final_user = await self.user_repository.update(user_id, user)
+        result = UserDTO.model_validate(final_user)
         log.debug(f"UserService User updated")
         return result
 
-    async def delete(self, user_id: str):
+    async def delete(self, user_id: str) -> bool:
         log.debug(f"UserService Deleting user: {user_id}")
         result = await self.user_repository.delete(user_id)
         log.debug(f"UserService User deleted")
@@ -68,14 +81,16 @@ class UserService:
         log.debug(f"UserService Users counted: {result}")
         return result
 
-    async def retrieve_by_email(self, email: str) -> User | None:
+    async def retrieve_by_email(self, email: str) -> Optional[UserDTO]:
         log.debug(f"UserService Retrieving user by email: {email}")
-        result = await self.user_repository.retrieve_by_email(email)
+        final_user = await self.user_repository.get_user_by_email(email)
+        result = UserDTO.model_validate(final_user)
         log.debug(f"UserService User retrieved: {result}")
         return result
 
-    async def retrieve_by_username(self, username: str) -> User | None:
+    async def retrieve_by_username(self, username: str) -> Optional[UserDTO]:
         log.debug(f"UserService Retrieving user by username: {username}")
-        result = await self.user_repository.retrieve_by_username(username)
+        final_user = await self.user_repository.get_user_by_username(username)
+        result = UserDTO.model_validate(final_user)
         log.debug(f"UserService User retrieved: {result}")
         return result

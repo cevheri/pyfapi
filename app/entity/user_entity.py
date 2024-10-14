@@ -3,8 +3,7 @@ from typing import Optional
 
 from beanie import Document
 
-from app.api.vm.user_vm import UserCreate, UserUpdate
-from app.schema.user_dto import UserDTO
+from app.schema.user_dto import UserDTO, UserCreate, UserUpdate
 
 
 class User(Document):
@@ -28,6 +27,14 @@ class User(Document):
         super().__init__(**kwargs)
         for k, v in kwargs.items():
             setattr(self, k, v)
+
+    def set_updated(self, user_id: str = None):
+        self.last_updated_by = user_id or "system"
+        self.last_updated_date = datetime.now(timezone.utc)
+
+    def set_created(self, user_id: str = None):
+        self.created_by = user_id or "system"
+        self.created_date = datetime.now(timezone.utc)
 
     @staticmethod
     def from_create(user_create: UserCreate):
