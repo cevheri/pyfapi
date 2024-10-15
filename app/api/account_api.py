@@ -1,14 +1,12 @@
 import logging
 
-from fastapi import APIRouter, HTTPException, Security, Depends
-from fastapi_jwt import JwtAuthorizationCredentials
+from fastapi import APIRouter, Depends
 
 from app.config.app_settings import server_settings
 from app.config.dependencies import get_user_service
 from app.jwt import auth_handler
-from app.security.auth_config import JWTBearer, decode_jwt_token_model
+from app.security.auth_config import JWTBearer
 from app.security.jwt_token import JWTToken
-from app.service.account_service import AccountService
 from app.service.user_service import UserService
 
 router = APIRouter(prefix=server_settings.CONTEXT_PATH, tags=["account"])

@@ -8,10 +8,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from app import entity
 
 log = logging.getLogger(__name__)
+client = None
+db = None
 
 
-class DatabaseSettings(
-    BaseSettings):  # , cli_parse_args=True for dev or prod environments like uvicorn run app:app --host "" --port 8080 --profile dev
+# , cli_parse_args=True for dev or prod environments like uvicorn run app:app --host "" --port 8080 --profile dev
+class DatabaseSettings(BaseSettings):
     """
     Database settings
 
@@ -37,6 +39,7 @@ async def init_db():
     # log.debug(f"Database URI: {DatabaseSettings().MONGODB_URI}")
     log.debug(f"Database name: {DatabaseSettings().DATABASE_NAME}")
 
+    global client, db
     client = AsyncIOMotorClient(DatabaseSettings().MONGODB_URI)
     db = client[DatabaseSettings().DATABASE_NAME]
 

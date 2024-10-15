@@ -1,8 +1,10 @@
-import jwt
 from datetime import datetime, timedelta
+from typing import Dict
+
+import jwt
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
-from typing import Dict
+
 from app.config.app_settings import jwt_settings
 
 SECRET_KEY = jwt_settings.SECRET_KEY

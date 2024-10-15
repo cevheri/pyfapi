@@ -1,17 +1,13 @@
 import logging
 
-from fastapi import APIRouter, Body
+from fastapi import APIRouter
 from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.vm.account_vm import LoginVM
 from app.config import dependencies
 from app.config.app_settings import server_settings
-from app.jwt import auth_handler
 from app.jwt.auth_service import AuthService
-from app.security.auth_config import sign_jwt
-from app.service.user_service import UserService
-from app.utils.pass_util import PasswordUtil
 
 router = APIRouter(prefix=server_settings.CONTEXT_PATH, tags=["auth"])
 

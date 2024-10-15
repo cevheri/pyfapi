@@ -1,4 +1,5 @@
 import logging
+
 from app.config.app_settings import log_settings, db_settings
 from app.config.db_config import init_db
 

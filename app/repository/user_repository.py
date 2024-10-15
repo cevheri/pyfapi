@@ -4,8 +4,8 @@ from typing import List, Optional
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from app.entity.user_entity import User
 from app.config.app_settings import db_settings
+from app.entity.user_entity import User
 
 log = logging.getLogger(__name__)
 

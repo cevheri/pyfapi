@@ -4,9 +4,9 @@ from typing import Optional
 
 from fastapi import Depends
 
-from app.schema.user_dto import UserDTO, UserCreate, UserUpdate
 from app.entity.user_entity import User
 from app.repository.user_repository import UserRepository
+from app.schema.user_dto import UserDTO, UserCreate, UserUpdate
 from app.utils.pass_util import PasswordUtil
 
 log = logging.getLogger(__name__)

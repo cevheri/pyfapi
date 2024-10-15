@@ -1,8 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, validator, field_validator, Field, EmailStr, ConfigDict
-from typing_extensions import deprecated
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
 
 class UserDTO(BaseModel):
