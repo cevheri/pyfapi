@@ -1,4 +1,5 @@
-# PyFApi 
+# PyFApi
+
 Python FastAPI MongoDB CRUD Application end-to-end example
 
 ## Overview
@@ -125,14 +126,15 @@ docker-compose up --build
 
 ```
 
-
-
 ## Conclusion
-This FastAPI MongoDB application is structured to provide a robust and scalable API solution. By leveraging Docker and CI/CD practices, the application can be easily deployed and maintained.
+
+This FastAPI MongoDB application is structured to provide a robust and scalable API solution. By leveraging Docker and
+CI/CD practices, the application can be easily deployed and maintained.
 
 Feel free to contribute to this project by submitting issues or pull requests!
 
 ## References
+
 - [FastAPI](https://fastapi.tiangolo.com/)
 - [FastAPI & MongoDB - the full guide](https://github.com/fastapi/fastapi/discussions/9074)
 - [Build a Cocktail API with Beanie and MongoDB](https://www.mongodb.com/developer/languages/python/beanie-odm-fastapi-cocktails//)

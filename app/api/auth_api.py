@@ -43,9 +43,10 @@ async def login(login_data: LoginVM,
     log.debug(f"AuthAPI User authenticated with token: {access_token}")
     return {"access_token": access_token, "token_type": "bearer"}
 
+
 @router.post("/login/oauth")
 async def login2(login_data: OAuth2PasswordRequestForm = Depends(),
-                auth_service: AuthService = Depends(dependencies.get_auth_service)):
+                 auth_service: AuthService = Depends(dependencies.get_auth_service)):
     log.debug(f"AuthAPI Authenticating user(oauth): {login_data}")
     user = await auth_service.authenticate_user(login_data.username, login_data.password)
     if not user:
@@ -54,6 +55,3 @@ async def login2(login_data: OAuth2PasswordRequestForm = Depends(),
     access_token = await auth_service.create_access_token_for_user(user)
     log.debug(f"AuthAPI User authenticated with token: {access_token}")
     return {"access_token": access_token, "token_type": "bearer"}
-
-
-

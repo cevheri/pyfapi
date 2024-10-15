@@ -14,7 +14,8 @@ class UserRepository:
 
     def __init__(self, db_client: AsyncIOMotorClient):
         self.db_client = db_client
-        self.collection = self.db_client.get_database(db_settings.DATABASE_NAME).get_collection(User.get_collection_name())
+        self.collection = self.db_client.get_database(db_settings.DATABASE_NAME).get_collection(
+            User.get_collection_name())
 
     async def create(self, user: User) -> User:
         log.debug(f"UserRepository Creating user: {user}")

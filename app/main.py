@@ -15,7 +15,6 @@ print("app.main.py is running")
 log = logging.getLogger(__name__)
 
 
-
 @asynccontextmanager
 async def lifespan(_):
     log.debug("FastAPI Lifespan started")

@@ -18,7 +18,6 @@ app = FastAPI()
 #     return current_user_context.get()
 
 
-
 class SecurityUtils:
     pass
     # @staticmethod

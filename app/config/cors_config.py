@@ -3,8 +3,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class CorsSettings(BaseSettings):
-
-
     model_config = SettingsConfigDict(env_prefix="CORS_")
 
     ALLOWED_ORIGINS: str = "*"

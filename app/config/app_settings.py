@@ -8,6 +8,6 @@ from app.config.server_config import ServerSettings
 log_settings = LoggingSettings()
 db_settings = DatabaseSettings()
 cors_settings = CorsSettings()
-email_settings =  SMTPSettings()
+email_settings = SMTPSettings()
 server_settings = ServerSettings()
 jwt_settings = JWTSettings()

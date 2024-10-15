@@ -3,19 +3,27 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
-
+#pret
 class UserDTO(BaseModel):
-    user_id: str = Field(..., alias="user_id", min_length=1, max_length=50, title="User ID", description="Unique Identifier of the record")
-    username: str = Field(..., alias="username", min_length=1, max_length=50, title="Username", description="username for login")
-    first_name: str = Field(..., alias="first_name", min_length=1, max_length=100, title="First Name", description="First Name")
-    last_name: str = Field(..., alias="last_name", min_length=1, max_length=100, title="Last Name", description="Last Name")
+    user_id: str = Field(..., alias="user_id", min_length=1, max_length=50, title="User ID",
+                         description="Unique Identifier of the record")
+    username: str = Field(..., alias="username", min_length=1, max_length=50, title="Username",
+                          description="username for login")
+    first_name: str = Field(..., alias="first_name", min_length=1, max_length=100, title="First Name",
+                            description="First Name")
+    last_name: str = Field(..., alias="last_name", min_length=1, max_length=100, title="Last Name",
+                           description="Last Name")
     email: EmailStr = Field(..., alias="email", title="Email", description="Email Address")
     is_active: bool = Field(..., alias="is_active", title="Is Active", description="Record is active or not")
     roles: list[str] = Field(..., alias="roles", title="Roles", description="List of roles")
-    created_by: str = Field(..., alias="created_by", min_length=1, max_length=50, title="Created By", description="Created By of the record")
-    created_date: datetime = Field(..., alias="created_date", title="Created Date", description="Created Date of the record")
-    last_updated_by: str = Field(..., alias="last_updated_by", min_length=1, max_length=50, title="Last Updated By", description="Last Updated By of the record")
-    last_updated_date: datetime = Field(..., alias="last_updated_date", title="Last Updated Date", description="Last Updated Date of the record")
+    created_by: str = Field(..., alias="created_by", min_length=1, max_length=50, title="Created By",
+                            description="Created By of the record")
+    created_date: datetime = Field(..., alias="created_date", title="Created Date",
+                                   description="Created Date of the record")
+    last_updated_by: str = Field(..., alias="last_updated_by", min_length=1, max_length=50, title="Last Updated By",
+                                 description="Last Updated By of the record")
+    last_updated_date: datetime = Field(..., alias="last_updated_date", title="Last Updated Date",
+                                        description="Last Updated Date of the record")
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -40,13 +48,17 @@ class UserDTO(BaseModel):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
+
 class UserCreate(BaseModel):
     """UserCreate schema"""
-    username: str = Field(..., alias="username", min_length=1, max_length=50, title="Username", description="username for login")
-    first_name: str = Field(..., alias="first_name", min_length=1, max_length=100, title="First Name", description="First Name")
-    last_name: str = Field(..., alias="last_name", min_length=1, max_length=100, title="Last Name", description="Last Name")
+    username: str = Field(..., alias="username", min_length=1, max_length=50, title="Username",
+                          description="username for login")
+    first_name: str = Field(..., alias="first_name", min_length=1, max_length=100, title="First Name",
+                            description="First Name")
+    last_name: str = Field(..., alias="last_name", min_length=1, max_length=100, title="Last Name",
+                           description="Last Name")
     email: EmailStr = Field(..., alias="email", title="Email", description="Email Address")
-    password: str = Field(..., alias="password", min_length=1, max_length=50, title="Password", description="Password")
+    password: str = Field(..., alias="password", min_length=1, max_length=50, title="Password", description="Plain-text password")
     is_active: bool = Field(..., alias="is_active", title="Is Active", description="Record is active or not")
     roles: list[str] = Field(..., alias="roles", title="Roles", description="List of roles")
 
@@ -71,8 +83,10 @@ class UserCreate(BaseModel):
 
 class UserUpdate(BaseModel):
     """User Update schema"""
-    first_name: Optional[str] = Field(None, alias="first_name", min_length=1, max_length=100, title="First Name", description="First Name")
-    last_name: Optional[str] = Field(None, alias="last_name", min_length=1, max_length=100, title="Last Name", description="Last Name")
+    first_name: Optional[str] = Field(None, alias="first_name", min_length=1, max_length=100, title="First Name",
+                                      description="First Name")
+    last_name: Optional[str] = Field(None, alias="last_name", min_length=1, max_length=100, title="Last Name",
+                                     description="Last Name")
     email: Optional[EmailStr] = Field(None, alias="email", title="Email", description="Email Address")
     is_active: Optional[bool] = Field(None, alias="is_active", title="Is Active", description="Record is active or not")
     roles: Optional[list[str]] = Field(None, alias="roles", title="Roles", description="List of roles")
