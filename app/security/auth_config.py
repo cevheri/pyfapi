@@ -8,7 +8,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic_settings import BaseSettings
 
 from app.entity import User
-from app.security.jwt_token import JWTToken
+from app.security.jwt_token import JWTUserToken
 
 log = logging.getLogger(__name__)
 
@@ -33,10 +33,10 @@ def decode_jwt(token: str) -> dict:
     return decoded_token if decoded_token["expires"] >= time.time() else {}
 
 
-def decode_jwt_token_model(credentials) -> JWTToken:
+def decode_jwt_token_model(credentials) -> JWTUserToken:
     res = decode_jwt(str(credentials))
     res["token"] = str(credentials)
-    jwt_token = JWTToken(**res)
+    jwt_token = JWTUserToken(**res)
     return jwt_token
 
 

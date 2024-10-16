@@ -3,7 +3,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
-#pret
+
+# pret
 class UserDTO(BaseModel):
     user_id: str = Field(..., alias="user_id", min_length=1, max_length=50, title="User ID",
                          description="Unique Identifier of the record")
@@ -48,6 +49,21 @@ class UserDTO(BaseModel):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
+    def to_json(self):
+        return {
+            "user_id": self.user_id,
+            "username": self.username,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+            "is_active": self.is_active,
+            "roles": self.roles,
+            "created_by": self.created_by,
+            "created_date": self.created_date.isoformat(),
+            "last_updated_by": self.last_updated_by,
+            "last_updated_date": self.last_updated_date.isoformat()
+        }
+
 
 class UserCreate(BaseModel):
     """UserCreate schema"""
@@ -58,12 +74,15 @@ class UserCreate(BaseModel):
     last_name: str = Field(..., alias="last_name", min_length=1, max_length=100, title="Last Name",
                            description="Last Name")
     email: EmailStr = Field(..., alias="email", title="Email", description="Email Address")
-    password: str = Field(..., alias="password", min_length=1, max_length=50, title="Password", description="Plain-text password")
+    password: str = Field(..., alias="password", min_length=1, max_length=50, title="Password",
+                          description="Plain-text password")
     is_active: bool = Field(..., alias="is_active", title="Is Active", description="Record is active or not")
     roles: list[str] = Field(..., alias="roles", title="Roles", description="List of roles")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        from_attributes=True,
+        title="User Create Model",
+        json_schema_extra={
             "example": {
                 "username": "john_doe",
                 "first_name": "John",
@@ -74,6 +93,7 @@ class UserCreate(BaseModel):
                 "roles": ["admin", "user"]
             }
         }
+    )
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -91,8 +111,10 @@ class UserUpdate(BaseModel):
     is_active: Optional[bool] = Field(None, alias="is_active", title="Is Active", description="Record is active or not")
     roles: Optional[list[str]] = Field(None, alias="roles", title="Roles", description="List of roles")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        from_attributes=True,
+        title="User Update Model",
+        json_schema_extra={
             "example": {
                 "first_name": "John",
                 "last_name": "Doe",
@@ -101,6 +123,7 @@ class UserUpdate(BaseModel):
                 "roles": ["admin", "user"]
             }
         }
+    )
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

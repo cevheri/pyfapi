@@ -4,6 +4,11 @@ from app.jwt import auth_handler
 from app.repository.user_repository import UserRepository
 
 
+async def create_access_token_for_user(user) -> str:
+    token_data = {"sub": user.username, "scopes": user.roles, "user_id": user.user_id, "email": user.email}
+    return auth_handler.create_access_token(token_data)
+
+
 class AuthService:
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
@@ -22,7 +27,3 @@ class AuthService:
         if not self.verify_password(password, user.hashed_password):
             return False
         return user
-
-    async def create_access_token_for_user(self, user) -> str:
-        token_data = {"sub": user.username, "scopes": user.roles, "user_id": user.user_id, "email": user.email}
-        return auth_handler.create_access_token(token_data)

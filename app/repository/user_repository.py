@@ -1,10 +1,11 @@
 import json
 import logging
-from typing import List, Optional
+from typing import Optional
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.config.app_settings import db_settings
+from app.config.page_response import PageResponse
 from app.entity.user_entity import User
 
 log = logging.getLogger(__name__)
@@ -14,41 +15,41 @@ class UserRepository:
 
     def __init__(self, db_client: AsyncIOMotorClient):
         self.db_client = db_client
-        self.collection = self.db_client.get_database(db_settings.DATABASE_NAME).get_collection(
-            User.get_collection_name())
+        self.db = db_client[db_settings.DATABASE_NAME]
+        self.collection = self.db.get_collection(User.get_collection_name())
 
     async def create(self, user: User) -> User:
         log.debug(f"UserRepository Creating user: {user}")
-        result = await user.create()
-        log.debug(f"UserRepository User created: {result.user_id}")
-        return result
+        result = await self.collection.insert_one(user.model_dump())
+        log.debug(f"UserRepository User created _id: {result.inserted_id}")
+        return user
 
     async def retrieve(self, user_id: str) -> User | None:
         log.debug(f"UserRepository Retrieving user: {user_id}")
-        result = await User.find_one(User.user_id == user_id)
-        log.debug(f"UserRepository User retrieved: {result.username}")
-        return result
+        result = await self.collection.find_one({"user_id": user_id})
+        if not result:
+            return None
+        user = User.model_load(result)
+        log.debug(f"UserRepository User retrieved")
+        return user
 
-    async def list(self, query: str, page, limit, sort) -> List[User]:
-
-        # set defaults if not provided. defaults are page=0, limit=10, sort=["+_id"] and should be set in environment or config or constants
+    async def find(self, query: str, page: int, size: int, sort: str) -> PageResponse[User]:
+        log.debug(f"UserRepository list request")
+        # TODO  set defaults if not provided. defaults are page=0, limit=10, sort=["+_id"] and should be set in environment or config or constants
         if query is None:
             query = {}
         else:
             query = json.loads(query)
 
-        if page is None:
-            page = 0
-        if limit is None:
-            limit = 10
-        if sort is None:
-            sort = ["+_id"]
+        total_count = await self.collection.count_documents(query)
+        if total_count == 0:
+            return PageResponse(content=[], page=page, size=size, total=total_count)
 
-        log.debug(f"UserRepository list with query: {query}, page: {page}, limit: {limit}, sort: {sort}")
-
-        result = await User.find(query).skip(page).limit(limit).sort(sort).to_list()
+        document = self.collection.find(query).skip(page * size).limit(size).sort(sort)
+        content = await document.to_list()
+        page_content = [User(**doc) for doc in content]
         log.debug(f"UserRepository Users retrieved")
-        return result
+        return PageResponse(content=page_content, page=page, size=size, total=total_count)
 
     async def update(self, user_id: str, user: User) -> User | None:
         log.debug(f"UserRepository Updating user: {user_id}")
@@ -56,7 +57,7 @@ class UserRepository:
         org_user = await User.find_one(User.user_id == user_id)
         if not org_user:
             return None
-        updated_user = user.dict(exclude_unset=True)
+        updated_user = user.model_dump(exclude_unset=True)
         result = await org_user.update(updated_user)
         log.debug(f"UserRepository User updated: {result.username}")
         return result

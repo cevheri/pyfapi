@@ -4,6 +4,7 @@ from typing import Optional
 
 from fastapi import Depends
 
+from app.config.page_response import PageResponse
 from app.entity.user_entity import User
 from app.repository.user_repository import UserRepository
 from app.schema.user_dto import UserDTO, UserCreate, UserUpdate
@@ -48,21 +49,26 @@ class UserService:
         log.debug(f"UserService User retrieved")
         return result
 
-    async def list(self, query, page, limit, sort) -> Optional[list[UserDTO]]:
-        log.debug(f"UserService list with query: {query}, page: {page}, limit: {limit}, sort: {sort}")
-        final_users = await self.user_repository.list(query, page, limit, sort)
-        if final_users is None:
-            log.error(f"UserService Users not found")
-            return None
-        result = [UserDTO.model_validate(user) for user in final_users]
-        log.debug(f"UserService Users retrieved")
-        return result
+    async def find(self, query, page: int, size: int, sort: str) -> PageResponse[UserDTO]:
+        log.debug(f"UserService list request")
+        entity_page_response = await self.user_repository.find(query, page, size, sort)
+        page_response = PageResponse[UserDTO](
+            content=[UserDTO.model_validate(user) for user in entity_page_response.content],
+            page=entity_page_response.page,
+            size=entity_page_response.size,
+            total=entity_page_response.total,
+        )
 
-    async def update(self, user_id: str, user_update: UserUpdate | User) -> UserDTO:
+        log.debug(f"UserService Users retrieved")
+        return page_response
+
+    async def update(self, user_id: str, user_update: UserUpdate | User | UserDTO) -> UserDTO:
         log.debug(f"UserService Updating user: {user_id} with: {type(user_update)}")
         if isinstance(user_update, UserUpdate):
             user = User.from_update(user_update)
-        else:
+        elif isinstance(user_update, UserDTO):
+            user = User.from_dto(user_update)
+        elif isinstance(user_update, User):
             user = user_update
         final_user = await self.user_repository.update(user_id, user)
         result = UserDTO.model_validate(final_user)

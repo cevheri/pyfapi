@@ -5,7 +5,7 @@ please report them to us as soon as possible.
 
 ## Reporting a Vulnerability
 
-1. **Email**: Send an email to [cevheribozoglan@gmail.com] with a clear description of the vulnerability you have found.
+1. **Email**: Email [cevheribozoglan@gmail.com] with a clear description of the vulnerability you have found.
 
 2. **Provide Details**: Include the following information in your report:
     - A description of the vulnerability.

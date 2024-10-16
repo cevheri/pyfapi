@@ -1,7 +1,7 @@
 import logging
 
 from app.api.vm.account_vm import ChangePasswordVM
-from app.schema.user_dto import UserDTO
+from app.schema.user_dto import UserDTO, UserUpdate
 from app.service.user_service import UserService
 from app.utils.pass_util import PasswordUtil
 
@@ -43,6 +43,7 @@ class AccountService:
             return False
 
         user.password = PasswordUtil().hash_password(password=change_password.new_password)
-        result = await self.user_service.update(user.user_id, user)
+        user_update = UserUpdate.model_validate(user)
+        result = await self.user_service.update(user.user_id, user_update)
         log.debug(f"AccountService Password changed for user: {result.username}")
         return True
