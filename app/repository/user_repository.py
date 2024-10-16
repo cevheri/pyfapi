@@ -20,22 +20,21 @@ class UserRepository:
 
     async def create(self, user: User) -> User:
         log.debug(f"UserRepository Creating user: {user}")
-        result = await self.collection.insert_one(user.model_dump())
-        log.debug(f"UserRepository User created _id: {result.inserted_id}")
+        doc = await self.collection.insert_one(user.model_dump())
+        log.debug(f"UserRepository User created _id: {doc.inserted_id}")
         return user
 
     async def retrieve(self, user_id: str) -> User | None:
         log.debug(f"UserRepository Retrieving user: {user_id}")
-        result = await self.collection.find_one({"user_id": user_id})
-        if not result:
+        doc = await self.collection.find_one({"user_id": user_id})
+        if not doc:
             return None
-        user = User.model_load(result)
+        result = User(**doc)
         log.debug(f"UserRepository User retrieved")
-        return user
+        return result
 
     async def find(self, query: str, page: int, size: int, sort: str) -> PageResponse[User]:
         log.debug(f"UserRepository list request")
-        # TODO  set defaults if not provided. defaults are page=0, limit=10, sort=["+_id"] and should be set in environment or config or constants
         if query is None:
             query = {}
         else:
@@ -51,37 +50,34 @@ class UserRepository:
         log.debug(f"UserRepository Users retrieved")
         return PageResponse(content=page_content, page=page, size=size, total=total_count)
 
-    async def update(self, user_id: str, user: User) -> User | None:
-        log.debug(f"UserRepository Updating user: {user_id}")
-        # update with merge patch
-        org_user = await User.find_one(User.user_id == user_id)
-        if not org_user:
-            return None
-        updated_user = user.model_dump(exclude_unset=True)
-        result = await org_user.update(updated_user)
-        log.debug(f"UserRepository User updated: {result.username}")
-        return result
+    async def update(self, user: User) -> User | None:
+        log.debug(f"UserRepository Updating user")
+        result = await self.collection.update_one({"user_id": user.user_id}, {"$set": user.model_dump()})
+        log.debug(f"UserRepository User updated: {result}")
+        return user
 
     async def delete(self, user_id: str) -> bool:
         log.debug(f"UserRepository Deleting user: {user_id}")
-        result = await User.delete_one(User.user_id == user_id)
-        log.debug(f"UserRepository User deleted: {result.username}")
-        return result
+        result = await self.collection.delete_one({"user_id": user_id})
+        log.debug(f"UserRepository User deleted: {result.deleted_count}")
+        return result.deleted_count > 0
 
     async def count(self, query: dict) -> int:
         log.debug(f"UserRepository Counting users with query: {query}")
-        result = await User.count_documents(query)
-        log.debug(f"UserRepository Users counted: {result.username}")
+        result = await self.collection.count_documents(query)
+        log.debug(f"UserRepository Users counted: {result}")
         return result
 
     async def get_user_by_email(self, email: str) -> Optional[User]:
         log.debug(f"UserRepository Retrieving user by email: {email}")
-        result = await User.find_one(User.email == email)
+        doc = await self.collection.find_one({"email": email})
+        result = User(**doc)
         log.debug(f"UserRepository User retrieved")
         return result
 
     async def get_user_by_username(self, username: str) -> Optional[User]:
         log.debug(f"UserRepository Retrieving user by username: {username}")
-        result = await User.find_one(User.username == username)
+        doc = await self.collection.find_one({"username": username})
+        result = User(**doc)
         log.debug(f"UserRepository User retrieved")
         return result

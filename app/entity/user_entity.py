@@ -21,7 +21,7 @@ class User(Document):
     last_updated_date: datetime = datetime.now(timezone.utc)
 
     class Settings:
-        collection = "app_user"
+        collection = "User"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

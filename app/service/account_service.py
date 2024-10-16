@@ -9,11 +9,11 @@ log = logging.getLogger(__name__)
 
 
 class AccountService:
-    def __init__(self):
+    def __init__(self, user_service: UserService):
         log.info(f"AccountService Initializing")
-        self.user_service = UserService()
+        self.user_service = user_service
 
-    async def get_account(self) -> UserDTO | None:
+    async def get_account(self, username:str) -> UserDTO | None:
         log.debug(f"AccountService Getting account")
         username = "admin"  # SecurityUtils.get_current_username()
         if username is None:
@@ -27,9 +27,8 @@ class AccountService:
         log.debug(f"AccountService User found: {result}")
         return result
 
-    async def change_password(self, change_password: ChangePasswordVM) -> bool:
+    async def change_password(self, username: str, change_password: ChangePasswordVM) -> bool:
         log.debug(f"AccountService Changing password")
-        username = "admin"  # SecurityUtils.get_current_username()
         if username is None:
             log.error(f"AccountService User not found")
             return False

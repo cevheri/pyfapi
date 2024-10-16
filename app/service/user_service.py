@@ -62,17 +62,25 @@ class UserService:
         log.debug(f"UserService Users retrieved")
         return page_response
 
-    async def update(self, user_id: str, user_update: UserUpdate | User | UserDTO) -> UserDTO:
+    async def update(self, user_id: str, user_update: UserUpdate) -> Optional[UserDTO]:
         log.debug(f"UserService Updating user: {user_id} with: {type(user_update)}")
-        if isinstance(user_update, UserUpdate):
-            user = User.from_update(user_update)
-        elif isinstance(user_update, UserDTO):
-            user = User.from_dto(user_update)
-        elif isinstance(user_update, User):
-            user = user_update
-        final_user = await self.user_repository.update(user_id, user)
+
+        if not user_update:
+            log.debug("UserService user_update is None")
+            return None
+
+        user_entity = await self.user_repository.retrieve(user_id)
+        if not user_entity:
+            log.error("UserService User not found")
+            return None
+
+        for attr in ['first_name', 'last_name', 'email', 'is_active', 'roles']:
+            if getattr(user_update, attr) is not None:
+                setattr(user_entity, attr, getattr(user_update, attr))
+
+        final_user = await self.user_repository.update(user_entity)
         result = UserDTO.model_validate(final_user)
-        log.debug(f"UserService User updated")
+        log.debug("UserService User updated")
         return result
 
     async def delete(self, user_id: str) -> bool:
