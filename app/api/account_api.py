@@ -6,7 +6,6 @@ from app.api.vm.account_vm import ChangePasswordVM
 from app.config.app_settings import server_settings
 from app.config.dependencies import get_account_service
 from app.jwt import auth_handler
-from app.security.auth_config import JWTBearer
 from app.security.jwt_token import JWTUserToken
 from app.service.account_service import AccountService
 from app.utils.jwt_token_utils import get_username_from_jwt_token
@@ -14,8 +13,6 @@ from app.utils.jwt_token_utils import get_username_from_jwt_token
 router = APIRouter(prefix=server_settings.CONTEXT_PATH, tags=["account"])
 
 log = logging.getLogger(__name__)
-
-jwt_security = JWTBearer()
 
 
 @router.get("/me")

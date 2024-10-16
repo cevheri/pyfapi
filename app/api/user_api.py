@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 @router.post("/users", response_model=UserDTO)
 async def create(user_create_data: UserCreate,
                  user_service: UserService = Depends(get_user_service),
-                 current_user: dict = Depends(get_current_user)
+                 token_data: dict = Depends(get_current_user)
                  ) -> UserDTO:
     """
     Create a new user with the provided user data.
@@ -29,7 +29,7 @@ async def create(user_create_data: UserCreate,
     The endpoint creates a new user with the provided user data and returns the created user's details.
     """
 
-    log.debug(f"UserApi Creating user: {user_create_data}")
+    log.debug(f"UserApi Creating user: {user_create_data}  {token_data}")
     result = await user_service.create(user_create_data)
     if result is None:
         log.error(f"UserApi User not created")

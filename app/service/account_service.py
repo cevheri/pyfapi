@@ -13,9 +13,8 @@ class AccountService:
         log.info(f"AccountService Initializing")
         self.user_service = user_service
 
-    async def get_account(self, username:str) -> UserDTO | None:
+    async def get_account(self, username: str) -> UserDTO | None:
         log.debug(f"AccountService Getting account")
-        username = "admin"  # SecurityUtils.get_current_username()
         if username is None:
             log.error(f"AccountService User not found")
             return None

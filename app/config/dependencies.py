@@ -10,7 +10,6 @@ from app.service.user_service import UserService
 
 async def get_db_client() -> AsyncIOMotorClient:
     client = AsyncIOMotorClient(db_settings.MONGODB_URI)
-    db = client[db_settings.DATABASE_NAME]
     try:
         yield client
     finally:
