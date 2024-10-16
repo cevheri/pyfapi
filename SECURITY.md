@@ -1,6 +1,6 @@
 # Security Policy
 
-Your security is our priority. If you discover any security vulnerabilities in this project, 
+Your security is our priority. If you discover any security vulnerabilities in this project,
 please report them to us as soon as possible.
 
 ## Reporting a Vulnerability
@@ -16,7 +16,7 @@ please report them to us as soon as possible.
 
 ## Response
 
-We will review your report and respond as soon as possible. 
+We will review your report and respond as soon as possible.
 We appreciate your help in improving the security of our project.
 
 Thank you for helping us keep our project secure!

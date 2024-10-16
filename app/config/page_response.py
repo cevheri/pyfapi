@@ -14,5 +14,3 @@ class PageResponse(Generic[T]):
         self.page = page
         self.size = size
         self.total = total
-
-

@@ -21,6 +21,7 @@ class JWTUserToken(BaseModel):
         self.expires = kwargs.get("exp")
         self.token = kwargs.get("token")
 
+
 class JWTAccessToken(BaseModel):
     access_token: str = Field(alias="access_token", title="Access Token")
     token_type: str = Field(alias="token_type", title="Token Type (Bearer)")

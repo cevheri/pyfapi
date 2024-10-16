@@ -1,7 +1,7 @@
 from app.config.page_response import PageResponse
 
 
-def create_list_header(page_response: PageResponse) :
+def create_list_header(page_response: PageResponse):
     """
     Create list header from page response.
 

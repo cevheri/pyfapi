@@ -4,8 +4,8 @@ Thank you for considering contributing to this project! Your contributions are w
 
 ## How to Contribute
 
-1. **Fork the repository**: Create your own copy of the repository by clicking on the "Fork" button 
-on the top right of the page.
+1. **Fork the repository**: Create your own copy of the repository by clicking on the "Fork" button
+   on the top right of the page.
 
 2. **Clone your fork**:
    ```bash

@@ -109,7 +109,8 @@ class UserUpdate(BaseModel):
                                      description="Last Name")
     email: Optional[EmailStr] = Field(None, alias="email", title="Email", description="Email Address")
     is_active: Optional[bool] = Field(None, alias="is_active", title="Is Active", description="Record is active or not")
-    password: str = Field(..., alias="password", min_length=1, max_length=50, title="Password",description="Plain-text password")
+    password: str = Field(..., alias="password", min_length=1, max_length=50, title="Password",
+                          description="Plain-text password")
     roles: Optional[list[str]] = Field(None, alias="roles", title="Roles", description="List of roles")
 
     model_config = ConfigDict(
