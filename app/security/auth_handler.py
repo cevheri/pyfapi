@@ -5,7 +5,7 @@ import jwt
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 
-from app.config.app_settings import jwt_settings
+from app.conf.app_settings import jwt_settings
 
 SECRET_KEY = jwt_settings.SECRET_KEY
 ALGORITHM = jwt_settings.ALGORITHM

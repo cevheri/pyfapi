@@ -13,3 +13,4 @@ bcrypt
 pymongo
 contextvars
 python-multipart
+Jinja2

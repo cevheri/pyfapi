@@ -4,8 +4,8 @@ from typing import Optional
 
 from fastapi import Depends
 
-from app.config.app_settings import app_settings
-from app.config.page_response import PageResponse
+from app.conf.app_settings import app_settings
+from app.conf.page_response import PageResponse
 from app.entity.user_entity import User
 from app.repository.user_repository import UserRepository
 from app.schema.user_dto import UserDTO, UserCreate, UserUpdate

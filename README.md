@@ -42,6 +42,11 @@ Also, this project use pydantic, motor, beanie, and docker.
 - Beanie
 - Uvicorn
 
+### Before you begin
+- change the environment values with your own values in the .env.dev and .env.prod files
+- Find the change-me and replace it with your own values in source code
+
+
 ### Build and Run
 
 #### Uvicorn (development mode)

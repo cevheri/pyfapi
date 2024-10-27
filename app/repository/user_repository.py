@@ -4,8 +4,8 @@ from typing import Optional
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from app.config.app_settings import db_settings
-from app.config.page_response import PageResponse
+from app.conf.app_settings import db_settings
+from app.conf.page_response import PageResponse
 from app.entity.user_entity import User
 
 log = logging.getLogger(__name__)

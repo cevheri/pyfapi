@@ -2,12 +2,12 @@ from wsgiref.util import application_uri
 
 from pydantic_settings import BaseSettings
 
-from app.config.cors_config import CorsSettings
-from app.config.db_config import DatabaseSettings
-from app.config.email_config import SMTPSettings
-from app.config.jwt_config import JWTSettings
-from app.config.log_config import LoggingSettings
-from app.config.server_config import ServerSettings
+from app.conf.cors_config import CorsSettings
+from app.conf.db_config import DatabaseSettings
+from app.conf.email_config import SMTPSettings
+from app.conf.jwt_config import JWTSettings
+from app.conf.log_config import LoggingSettings
+from app.conf.server_config import ServerSettings
 
 class ApplicationSettings(BaseSettings):
     """
@@ -15,8 +15,8 @@ class ApplicationSettings(BaseSettings):
     """
     APP_NAME: str = "PyFAPI"
     APP_VERSION: str = "0.1.0"
-    APP_DESCRIPTION: str = "FastAPI application"
-    APP_URL: str = "http://localhost:8000"
+    APP_DESCRIPTION: str = "Python FastAPI mongodb app for Enterprise usage with best practices, tools, and more."
+    APP_URL: str = "http://localhost:8001"
     APP_DEBUG: bool = True
 
 

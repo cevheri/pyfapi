@@ -43,4 +43,4 @@ async def init_db():
     client = AsyncIOMotorClient(DatabaseSettings().MONGODB_URI)
     db = client[DatabaseSettings().DATABASE_NAME]
 
-    await init_beanie(database=db, document_models=[entity.User, entity.Role])
+    await init_beanie(database=db, document_models=[entity.User, entity.Role]) # TODO change-me: add more entities here

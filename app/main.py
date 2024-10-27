@@ -1,18 +1,21 @@
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
 
 from app import init_db
 from app.api import user_api, auth_api, account_api
-from app.config.app_settings import cors_settings, server_settings
+from app.conf.app_settings import cors_settings, server_settings, app_settings
 from app.migration import user_migration
 from app.security import auth_handler
 
 print("app.main.py is running")
 
 log = logging.getLogger(__name__)
+
+templates = Jinja2Templates(directory="././templates")
 
 
 @asynccontextmanager
@@ -48,14 +51,30 @@ app.include_router(account_api.router, tags=["account"], dependencies=[Depends(a
 app.include_router(user_api.router, tags=["users"], dependencies=[Depends(auth_handler.get_current_user)])
 
 
-@app.get("/")
-async def root():
-    return {
-        "app": {
-            "name": "PyFAPI Application",
-            "description": "Python FastAPI mongodb app for Enterprise usage with best practices, tools, and more.",
-            "version": "1.0.0",
-        },
-        "author": "cevheri",
-        "github": "https://github.com/cevheri/pyfapi.git",
+async def get_root_page(request: Request):
+    context = {
+        "request": request,
+        "app_name": app_settings.APP_NAME,
+        "app_url": app_settings.APP_URL,
+        "app_description": app_settings.APP_DESCRIPTION,
+        "app_version": app_settings.APP_VERSION,
+        "server_settings": server_settings,
+        "author": "piai-team",
+        "github": "https://github.com/cevheri/pyfapi"
     }
+    return templates.TemplateResponse("index.html", context)
+
+
+@app.get("/")
+async def root(request: Request):
+    return await get_root_page(request)
+
+
+@app.get("/api/v1/")
+async def root_base_path(request: Request):
+    return await get_root_page(request)
+
+
+@app.get("/api/v1/health")
+async def health():
+    return {"status": "UP"}

@@ -6,7 +6,7 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from app.config.app_settings import email_settings
+from app.conf.app_settings import email_settings
 
 
 async def send_email(to, subject: str, body: str, attachment_path: str | None = None):

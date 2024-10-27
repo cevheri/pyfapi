@@ -4,8 +4,8 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 
-from app.config.app_settings import server_settings
-from app.config.dependencies import get_user_service
+from app.conf.app_settings import server_settings
+from app.conf.dependencies import get_user_service
 from app.schema.user_dto import UserDTO, UserCreate, UserUpdate
 from app.security.auth_handler import get_current_user
 from app.service.user_service import UserService

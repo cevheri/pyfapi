@@ -5,8 +5,8 @@ from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.vm.account_vm import LoginVM
-from app.config import dependencies
-from app.config.app_settings import server_settings
+from app.conf import dependencies
+from app.conf.app_settings import server_settings
 from app.security.auth_service import AuthService, create_access_token_for_user
 from app.security.jwt_token import JWTAccessToken
 

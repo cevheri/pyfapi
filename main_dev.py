@@ -1,6 +1,6 @@
 import uvicorn
 
-from app.config.app_settings import server_settings
+from app.conf.app_settings import server_settings
 
 if __name__ == "__main__":
     print("Running in dev")

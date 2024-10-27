@@ -3,8 +3,8 @@ import logging
 from fastapi import APIRouter, Depends
 
 from app.api.vm.account_vm import ChangePasswordVM
-from app.config.app_settings import server_settings
-from app.config.dependencies import get_account_service
+from app.conf.app_settings import server_settings
+from app.conf.dependencies import get_account_service
 from app.security import auth_handler
 from app.security.jwt_token import JWTUserToken
 from app.service.account_service import AccountService

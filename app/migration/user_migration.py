@@ -26,7 +26,7 @@ async def init_default_user():
         log.info(f"Default user already exists")
         return
 
-    hashed_password = PasswordUtil().hash_password("admin")
+    hashed_password = PasswordUtil().hash_password("admin") # TODO change-me: change the default password
     user_create = User(
         user_id=str(uuid.uuid4()),
         username="admin",

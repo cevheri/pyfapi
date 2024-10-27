@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Root Endpoint</title>
+</head>
+<body>
+    <h1>Welcome to the {{ app_name }}</h1>
+    <p>{{ app_description }}</p>
+    <p>Version: {{ app_version }}</p>
+    <ul>
+        <li><a href="{{ app_url }}/docs">Swagger UI</a></li>
+        <li><a href="{{ app_url }}/redoc">ReDoc UI</a></li>
+        <li><a href="{{ app_url }}/openapi.json">OpenAPI JSON</a></li>
+    </ul>
+    <p>Author: {{ author }}</p>
+    <p>GitHub: <a href="{{ github }}">{{ github }}</a></p>
+</body>
+</html>
