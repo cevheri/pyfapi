@@ -12,6 +12,9 @@ It is a simple CRUD application that allows to create, read, update, and delete.
 
 Also, this project use pydantic, motor, beanie, and docker.
 
+---
+
+
 ## Technologies
 
 - **[FastAPI](https://fastapi.tiangolo.com/)**: A modern, fast (high-performance) web framework for building APIs with
@@ -26,6 +29,9 @@ Also, this project use pydantic, motor, beanie, and docker.
   Data models are based on Pydantic.
 - **[Docker](https://www.docker.com/)**: Docker is a set of platform as a service products that use OS-level
   virtualization to deliver software in packages called containers.
+
+---
+
 
 ## Setup and Installation
 
@@ -42,10 +48,14 @@ Also, this project use pydantic, motor, beanie, and docker.
 - Beanie
 - Uvicorn
 
+---
+
 ### Before you begin
+
 - change the environment values with your own values in the .env.dev and .env.prod files
 - Find the change-me and replace it with your own values in source code
 
+---
 
 ### Build and Run
 
@@ -122,26 +132,31 @@ docker-compose up --build
 
 ### Access the application
 
-- Open your browser and go to root url http://localhost:8000 to access the FastAPI application.
-- Open your browser and go to http://localhost:8000/api/v1/docs to access the Swagger UI.
-- Open your browser and go to http://localhost:8081 to access the MongoDB Express.
+- Open your browser and go to root url [http://localhost:8000](http://localhost:8000) to access the FastAPI application.
+- Open your browser and go to [http://localhost:8000/api/v1/docs](http://localhost:8000/api/v1/docs) to access the
+  Swagger UI.
+- Open your browser and go to [http://localhost:8081](http://localhost:8081) to access the MongoDB Express.
+
+---
 
 ## Folder Structure
 
-```plaintext
-.
-├── app
-│   ├── api
-│   ├── config
-│   ├── entity
-│   ├── repository
-│   ├── service
-│   ├── security
-│   ├── utils
-│   ├── main.py
-├── tests
+| ...               | ...                           |
+|-------------------|-------------------------------|
+| -- app            | Main application directory    | 
+| -- app/api        | API endpoints and routes      |
+| -- app/config     | Configuration settings        |
+| -- app/entity     | Data models                   |
+| -- app/repository | Data access layer             |
+| -- app/service    | Business logic layer          |
+| -- app/security   | Security settings             |
+| -- app/utils      | Utility functions             |
+| -- app/main.py    | Main application file         |
+| -- tests          | Test cases                    |
+| -- .env.default   | Default environment variables |
+| ...               | ...                           |
 
-```
+---
 
 ## Conclusion
 
@@ -149,6 +164,8 @@ This FastAPI MongoDB application is structured to provide a robust and scalable 
 CI/CD practices, the application can be easily deployed and maintained.
 
 Feel free to contribute to this project by submitting issues or pull requests!
+
+---
 
 ## References
 

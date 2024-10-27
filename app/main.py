@@ -1,6 +1,7 @@
 import logging
 from contextlib import asynccontextmanager
 
+import markdown
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
@@ -51,7 +52,24 @@ app.include_router(account_api.router, tags=["account"], dependencies=[Depends(a
 app.include_router(user_api.router, tags=["users"], dependencies=[Depends(auth_handler.get_current_user)])
 
 
-async def get_root_page(request: Request):
+# async def get_root_page(request: Request):
+#     context = {
+#         "request": request,
+#         "app_name": app_settings.APP_NAME,
+#         "app_url": app_settings.APP_URL,
+#         "app_description": app_settings.APP_DESCRIPTION,
+#         "app_version": app_settings.APP_VERSION,
+#         "server_settings": server_settings,
+#         "author": "piai-team",
+#         "github": "https://github.com/cevheri/pyfapi"
+#     }
+#     return templates.TemplateResponse("index.html", context)
+
+
+async def get_root_page_from_readme(request: Request):
+    with open("././README.md") as f:
+        readme = f.read()
+        html = markdown.markdown(readme, extensions=["markdown.extensions.tables"])
     context = {
         "request": request,
         "app_name": app_settings.APP_NAME,
@@ -60,19 +78,20 @@ async def get_root_page(request: Request):
         "app_version": app_settings.APP_VERSION,
         "server_settings": server_settings,
         "author": "piai-team",
-        "github": "https://github.com/cevheri/pyfapi"
+        "github": "https://github.com/cevheri/pyfapi",
+        "readme_content": html
     }
     return templates.TemplateResponse("index.html", context)
 
 
 @app.get("/")
 async def root(request: Request):
-    return await get_root_page(request)
+    return await get_root_page_from_readme(request)
 
 
 @app.get("/api/v1/")
 async def root_base_path(request: Request):
-    return await get_root_page(request)
+    return await get_root_page_from_readme(request)
 
 
 @app.get("/api/v1/health")
