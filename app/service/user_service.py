@@ -4,13 +4,33 @@ from typing import Optional
 
 from fastapi import Depends
 
+from app.config.app_settings import app_settings
 from app.config.page_response import PageResponse
 from app.entity.user_entity import User
 from app.repository.user_repository import UserRepository
 from app.schema.user_dto import UserDTO, UserCreate, UserUpdate
+from app.service.email_service import send_email
 from app.utils.pass_util import PasswordUtil
 
 log = logging.getLogger(__name__)
+
+
+async def send_creation_email(user: UserDTO):
+    """
+    Send creation email to user with background task
+    :param user: created user information
+    """
+    log.debug(f"UserService Sending creation email on background task to user: {user.email}")
+    to = user.email
+    app_name = app_settings.APP_NAME
+    app_url = app_settings.APP_URL
+    subject = f"Welcome to the {app_name}"
+    body = f"Hello {user.first_name},\n\n" \
+           f"Welcome to the {app_name}. Your account has been created successfully.\n\n" \
+           f"Please visit {app_url} to login to your account.\n\n" \
+           f"{app_name} Team."
+    await send_email(to, subject, body)
+    log.debug(f"UserService Creation email sent to user: {user.email}")
 
 
 class UserService:
@@ -37,6 +57,7 @@ class UserService:
         final_user = await self.user_repository.create(user)
         result = UserDTO.model_validate(final_user)
         log.debug(f"UserService User created: {result.user_id}")
+        await send_creation_email(result)
         return result
 
     async def retrieve(self, user_id: str) -> Optional[UserDTO]:
