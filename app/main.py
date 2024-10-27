@@ -7,8 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import init_db
 from app.api import user_api, auth_api, account_api
 from app.config.app_settings import cors_settings, server_settings
-from app.jwt import auth_handler
 from app.migration import user_migration
+from app.security import auth_handler
 
 print("app.main.py is running")
 

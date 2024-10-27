@@ -61,7 +61,7 @@ cd pyfapi
 - create a virtual environment
 
 ```bash
-python -m venv venv
+python3 -m venv venv
 ```
 
 - Activate the virtual environment
@@ -89,10 +89,22 @@ cp .env.default .env.prod
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --env-file .env.dev
 ```
 
+- Run the application production mode with python
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --env-file .env.prod
+```
+
 #### python (development mode)
 
 ```bash
-python main-dev.py
+python3 main_dev.py
+```
+
+#### python (production mode)
+
+```bash
+python3 main_prod.py
 ```
 
 #### Docker (development mode)

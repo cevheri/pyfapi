@@ -1,7 +1,7 @@
 from passlib.context import CryptContext
 
-from app.jwt import auth_handler
 from app.repository.user_repository import UserRepository
+from app.security import auth_handler
 
 
 async def create_access_token_for_user(user) -> str:

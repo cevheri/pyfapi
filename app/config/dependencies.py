@@ -2,8 +2,8 @@ from fastapi import Depends
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.config.app_settings import db_settings
-from app.jwt.auth_service import AuthService
 from app.repository.user_repository import UserRepository
+from app.security.auth_service import AuthService
 from app.service.account_service import AccountService
 from app.service.user_service import UserService
 

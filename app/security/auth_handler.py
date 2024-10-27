@@ -21,7 +21,7 @@ def create_access_token(data: Dict) -> str:
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-def decode_access_token(token: str) -> Dict:
+def _decode_access_token(token: str) -> Dict:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         payload["token"] = token
@@ -33,4 +33,9 @@ def decode_access_token(token: str) -> Dict:
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)) -> Dict:
-    return decode_access_token(token)
+    """
+    Get the current user from the access token
+    :param token: authentication token
+    :return: user and token data
+    """
+    return _decode_access_token(token)
