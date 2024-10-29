@@ -33,6 +33,31 @@ class UserRepository:
         log.debug(f"UserRepository User retrieved")
         return result
 
+    # TODO - Implement the find method
+    #        # Parse the query string if provided, otherwise set to an empty dict
+    #         try:
+    #             mongo_query = json.loads(query) if query else {}
+    #         except json.JSONDecodeError as e:
+    #             raise HTTPException(status_code=400, detail="Invalid query format") from e
+    #
+    #         # MongoDB count_documents for total count
+    #         total_count = await self.collection.count_documents(mongo_query)
+    #         if total_count == 0:
+    #             return PageResponse(content=[], page=page, size=size, total=total_count)
+    #
+    #         # Build the MongoDB cursor with optional sorting, pagination, and limit
+    #         cursor = self.collection.find(mongo_query)
+    #         if sort:
+    #             sort_field, sort_order = (sort.split(":") + ["asc"])[:2]
+    #             sort_order = 1 if sort_order.lower() == "asc" else -1
+    #             cursor = cursor.sort(sort_field, sort_order)
+    #
+    #         cursor = cursor.skip(page * size).limit(size)
+    #
+    #         # Retrieve results and map to User model
+    #         content = await cursor.to_list(length=size)
+    #         page_content = [User(**doc) for doc in content]
+
     async def find(self, query: str, page: int, size: int, sort: str) -> PageResponse[User]:
         log.debug(f"UserRepository list request")
         if query is None:

@@ -1,12 +1,12 @@
 from pydantic_settings import BaseSettings
 
-from app.conf.cors_config import CorsSettings
-from app.conf.db_config import DatabaseSettings
-from app.conf.email_config import SMTPSettings
-from app.conf.jwt_config import JWTSettings
-from app.conf.log_config import LoggingSettings
-from app.conf.security_settings import SecuritySettings
-from app.conf.server_config import ServerSettings
+from app.conf.env.cors_config import CorsSettings
+from app.conf.env.db_config import DatabaseSettings
+from app.conf.env.email_config import SMTPSettings
+from app.conf.env.jwt_config import JWTSettings
+from app.conf.env.log_config import LoggingSettings
+from app.conf.env.security_settings import SecuritySettings
+from app.conf.env.server_config import ServerSettings
 
 
 class ApplicationSettings(BaseSettings):

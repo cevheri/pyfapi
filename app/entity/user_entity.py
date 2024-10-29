@@ -19,6 +19,7 @@ class User(Document):
     created_date: Optional[datetime] = None
     last_updated_by: str
     last_updated_date: datetime = datetime.now(timezone.utc)
+    age: Optional[int] = None
 
     class Settings:
         collection = "User"

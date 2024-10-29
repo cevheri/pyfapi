@@ -1,31 +1,37 @@
 import logging
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import (
+    APIRouter,
+    Depends,
+    status,
+    HTTPException,
+    Request,
+)
 from fastapi.responses import JSONResponse
-from starlette import status
 
 from app.api.vm.api_response import response_status_codes
 from app.conf.app_settings import server_settings
 from app.conf.dependencies import get_user_service
+from app.conf.query_params import QueryParams
 from app.schema.user_dto import UserDTO, UserCreate, UserUpdate
 from app.security import auth_handler
 from app.service.user_service import UserService
 from app.utils.header_utils import create_list_header
 
 _path = server_settings.CONTEXT_PATH + "/users"
+_log = logging.getLogger(__name__)
 
 router = APIRouter(prefix=_path,
                    tags=["users"],
                    dependencies=[Depends(auth_handler.get_token_user)],
                    responses=response_status_codes)
-_log = logging.getLogger(__name__)
 
 
 @router.post("", response_model=UserDTO, status_code=status.HTTP_201_CREATED)
 async def create(user_create_data: UserCreate,
+                 request: Request,
                  user_service: UserService = Depends(get_user_service),
-                 token_data: dict = Depends(auth_handler.get_token_user)
                  ) -> UserDTO:
     """
     Create a new user with the provided user data.
@@ -35,7 +41,7 @@ async def create(user_create_data: UserCreate,
 
     The endpoint creates a new user with the provided user data and returns the created user's details.
     """
-
+    token_data = request.state.jwt_user
     _log.debug(f"UserApi Creating user: {user_create_data}  {token_data}")
     result = await user_service.create(user_create_data)
     if result is None:
@@ -88,11 +94,8 @@ async def retrieve_by_username(username: str,
     return result
 
 
-@router.get("", status_code=status.HTTP_200_OK)
-async def find(query: str = None,
-               page: int = 0,
-               size: int = 10,
-               sort: str = '+_id',
+@router.get("", response_model=list[UserDTO])
+async def find(query: QueryParams = Depends(QueryParams),
                user_service: UserService = Depends(get_user_service)
                ) -> JSONResponse:
     """
@@ -104,11 +107,18 @@ async def find(query: str = None,
     **sort**: Sort the users.
 
     **return**: List of users
+    ** sample usage**:
+    - /users?q={"username":"john_doe1"}
+    - /users?q={"age": {"$gte": 25}}
+    - /users?q={"$or": [{"username": "john_doe1"}, {"age": {"$gte": 25}}]}
+    - /users?q={"$and": [{"username": "john_doe1"}, {"age": {"$gte": 25}}]}
+    - /users?q={"$nor": [{"username": "john_doe1"}, {"age": {"$gte": 25}}]}
+    - /users?q={"username": {"$in": ["john_doe1", "john_doe2"]}}
 
     The endpoint lists the users with the provided query, page, limit, and sort and returns the list of users.
     """
     _log.debug(f"UserApi list with query")
-    page_response = await user_service.find(query, page, size, sort)
+    page_response = await user_service.find(query=query.q, page=query.offset, size=query.limit, sort=query.sort)
     # headers =  {"X-Total-Count": str(page_response.total)}
     headers = create_list_header(page_response)
     _log.debug(f"UserApi list retrieved with {page_response.total} records")

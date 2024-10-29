@@ -1,14 +1,14 @@
 import logging
 
 from fastapi import APIRouter, HTTPException
-from fastapi.params import Depends
+from fastapi.params import Depends, Form
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.vm.account_vm import LoginVM
 from app.api.vm.api_response import response_status_codes
 from app.conf import dependencies
 from app.conf.app_settings import server_settings
-from app.security.auth_service import AuthService, create_access_token_for_user
+from app.security.auth_service import create_access_token_for_user, AuthService
 from app.security.jwt_token import JWTAccessToken
 
 _log = logging.getLogger(__name__)
@@ -17,15 +17,14 @@ router = APIRouter(prefix=_path, tags=["auth"], responses=response_status_codes)
 
 
 @router.post("/login", name="jwt_login", summary="Login with username and password", response_model=JWTAccessToken)
-async def jwt_login(login_data: LoginVM,
-                    auth_service: AuthService = Depends(
-                        dependencies.get_auth_service)) -> HTTPException | JWTAccessToken:
+async def jwt_login(login_data: LoginVM = Form(...),
+                    auth_service: AuthService = Depends(dependencies.get_auth_service)) -> JWTAccessToken:
     """
     Login with username and password to get the access token.
 
     **login_data**: Login data with username and password.
 
-    **return**: Access token.
+    **return**: JWT Access token.
 
     The endpoint authenticates the user with the provided username and password and returns the access token.
     """
@@ -41,14 +40,14 @@ async def jwt_login(login_data: LoginVM,
 
 
 @router.post("/login/oauth", name="oauth_login", summary="OAuth login")
-async def oauth_login(oauth_data: OAuth2PasswordRequestForm = Depends(),
+async def oauth_login(oauth_data: OAuth2PasswordRequestForm = Depends(OAuth2PasswordRequestForm),
                       auth_service: AuthService = Depends(dependencies.get_auth_service)):
     """
     Login with OAuth to get the access token.
 
     **oauth_data**: OAuth data with username and password (Optional : **grant_type**, **scope**, **client_id**, **client_secret**).
 
-    **return**: Access token
+    **return**: JWT Access token
 
     The endpoint authenticates the user with the provided OAuth data and returns the access token.
     """

@@ -3,8 +3,8 @@ from pydantic import BaseModel
 
 class LoginVM(BaseModel):
     """Login schema for authentication"""
-    username: str
-    password: str
+    username: str="admin"
+    password: str="admin"
 
     class Config:
         json_schema_extra = {
