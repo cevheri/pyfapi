@@ -15,14 +15,16 @@ class AccountService:
 
     async def get_account(self, username: str) -> UserDTO | None:
         log.debug(f"AccountService Getting account")
-        if username is None:
+        if not username:
             log.error(f"AccountService User not found")
             return None
-        user = await self.user_service.retrieve_by_username(username)
-        if user is None:
+        result = await self.user_service.retrieve_by_username(username)
+        if not result:
             log.error(f"AccountService User not found")
             return None
-        result = UserDTO.from_entity(user)
+        if not result.is_active:
+            log.error(f"AccountService User is not active")
+            return None
         log.debug(f"AccountService User found: {result}")
         return result
 

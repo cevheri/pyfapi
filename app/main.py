@@ -2,15 +2,14 @@ import logging
 from contextlib import asynccontextmanager
 
 import markdown
-from fastapi import FastAPI, Depends, Request
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 
-from app import init_db
-from app.api import user_api, auth_api, account_api
+from app import init_db, api
 from app.conf.app_settings import cors_settings, server_settings, app_settings
+from app.middleware.security_middleware import SecurityMiddleware
 from app.migration import user_migration
-from app.security import auth_handler
 
 print("app.main.py is running")
 
@@ -27,6 +26,30 @@ async def lifespan(_):
     yield
 
 
+tags_metadata = [
+    {
+        "name": "auth",
+        "description": "Operations with authentication. The **login** endpoint returns the access token."
+    },
+    {
+        "name": "account",
+        "description": "Operations with account. The **account** endpoint returns the account information."
+    },
+    {
+        "name": "users",
+        "description": "Operations with users. The **users** endpoint returns the user information."
+    }
+]
+servers_metadata = [
+        {
+            "url": app_settings.APP_URL,
+            "description": "Production server"
+        },
+        {
+            "url": "http://localhost:8000",
+            "description": "Local server"
+        }
+    ]
 app = FastAPI(
     title="PyFAPI",
     summary="Python FastAPI mongodb Application",
@@ -36,6 +59,18 @@ app = FastAPI(
     redoc_url=f"{server_settings.CONTEXT_PATH}/redoc",
     openapi_url=f"{server_settings.CONTEXT_PATH}/openapi.json",
     lifespan=lifespan,
+    openapi_tags=tags_metadata,
+    contact={
+        "name": f"{app_settings.APP_NAME} Team",
+        "url": "https://github.com/cevheri",
+        "email": "cevheribozoglan@gmail.com"
+    },
+    license_info={
+        "name": "Apache 2.0",
+        "url": "https://github.com/cevheri/pyfapi/blob/main/LICENSE"
+    },
+    terms_of_service="https://example.com/terms/",
+    servers=servers_metadata
 )
 
 # noinspection PyTypeChecker
@@ -46,10 +81,11 @@ app.add_middleware(
     allow_methods=cors_settings.ALLOWED_METHODS,
     allow_headers=cors_settings.ALLOWED_HEADERS
 )
-
-app.include_router(auth_api.router, tags=["auth"])
-app.include_router(account_api.router, tags=["account"], dependencies=[Depends(auth_handler.get_current_user)])
-app.include_router(user_api.router, tags=["users"], dependencies=[Depends(auth_handler.get_current_user)])
+# noinspection PyTypeChecker
+app.add_middleware(SecurityMiddleware)
+app.include_router(api.auth_router)
+app.include_router(api.account_router)
+app.include_router(api.user_router)
 
 
 # async def get_root_page(request: Request):
@@ -77,7 +113,7 @@ async def get_root_page_from_readme(request: Request):
         "app_description": app_settings.APP_DESCRIPTION,
         "app_version": app_settings.APP_VERSION,
         "server_settings": server_settings,
-        "author": "piai-team",
+        "author": "cevheri",
         "github": "https://github.com/cevheri/pyfapi",
         "readme_content": html
     }
@@ -89,7 +125,7 @@ async def root(request: Request):
     return await get_root_page_from_readme(request)
 
 
-@app.get("/api/v1/")
+@app.get("/api/v1")
 async def root_base_path(request: Request):
     return await get_root_page_from_readme(request)
 

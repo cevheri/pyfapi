@@ -6,8 +6,21 @@
     <title>{{ app_name }} - Home</title>
     <style>
         /* General settings */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #333; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #333;
+        }
 
         /* Container */
         .container {
@@ -15,96 +28,105 @@
             max-width: 800px;
             background-color: #fff;
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             padding: 20px;
             text-align: center;
             margin: 20px;
         }
 
         /* title and description */
-        h1 { font-size: 2.5em; color: #333; margin-bottom: 10px; }
-        p { margin-bottom: 15px; line-height: 1.6; }
-        strong { font-weight: bold; }
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        strong {
+            font-weight: bold;
+        }
 
         /* Links */
-        a { color: #007acc; text-decoration: none; font-weight: bold; }
-        a:hover { text-decoration: underline; }
-        ul { list-style: none; padding: 0; margin-top: 15px; }
-        ul li { margin-bottom: 10px; }
+        a {
+            color: #007acc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+        }
 
         /* Footer */
-        .footer { margin-top: 20px; font-size: 0.9em; color: #999; }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #999;
+        }
+
         /* README content */
-        .readme-content { text-align: left; margin-top: 20px; padding: 15px; background-color: #fafafa; border-radius: 8px; }
-        .readme-content h2, .readme-content h3 { color: #333; }
-        .readme-content p { color: #555; }
+        .readme-content {
+            text-align: left;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fafafa;
+            border-radius: 8px;
+        }
+
+        .readme-content h2, .readme-content h3 {
+            color: #333;
+        }
+
+        .readme-content p {
+            color: #555;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to {{ app_name }}</h1>
-        <p>{{ app_description }}</p>
-        <p><strong>Version:</strong> {{ app_version }}</p>
-
+<div class="container">
+    <h1>Welcome to {{ app_name }}</h1>
+    <p>{{ app_description }}</p>
+    <p><strong>Version:</strong> {{ app_version }}</p>
+    <br>
+    <br>
+    <div style="text-align: left;">
         <ul>
-            <li><a href="{{ app_url }}/docs">Swagger UI</a> - API Documentation</li>
-            <li><a href="{{ app_url }}/redoc">ReDoc UI</a> - Alternative Documentation</li>
-            <li><a href="{{ app_url }}/openapi.json">OpenAPI JSON</a> - API Schema</li>
+            <li><a href="{{ app_url }}{{ server_settings.CONTEXT_PATH }}/docs">Swagger UI</a> - API Documentation</li>
+            <li><a href="{{ app_url }}{{ server_settings.CONTEXT_PATH }}/redoc">ReDoc UI</a> - Alternative Documentation</li>
+            <li><a href="{{ app_url }}{{ server_settings.CONTEXT_PATH }}/openapi.json">OpenAPI JSON</a> - API Schema</li>
+            <li><a href="{{ app_url }}{{ server_settings.CONTEXT_PATH }}/health">Server Health Check</a> - Server Health Check</li>
         </ul>
 
-        <p><strong>Author:</strong> {{ author }}</p>
-        <p><strong>GitHub:</strong> <a href="{{ github }}">{{ github }}</a></p>
+    <p><strong>Author:</strong> {{ author }}</p>
+    <p><strong>GitHub:</strong> <a href="{{ github }}">{{ github }}</a></p>
 
-        <!-- README Content -->
-        <div class="readme-content">
-            <p><h1>Documentation</h1></p>
-            {{ readme_content | safe }}
-        </div>
-
-        <div class="footer">
-            &copy; {{ author }} - Powered by FastAPI
-        </div>
     </div>
+
+    <br>
+    <!-- README Content -->
+    <div class="readme-content">
+        <p>
+        <h1>API Documentation</h1></p>
+        {{ readme_content | safe }}
+    </div>
+
+    <div class="footer">
+        &copy; {{ author }} - Powered by FastAPI
+    </div>
+</div>
 </body>
 </html>
-
-
-
-<!--<div class="container">-->
-<!--    {{ readme_content | safe }}-->
-<!--</div>-->
-
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--    <title>{{ app_name }} - Home</title>-->
-<!--    <style>-->
-<!--        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f9; }-->
-<!--        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }-->
-<!--        h1 { color: #333; }-->
-<!--        p { color: #555; }-->
-<!--        a { color: #007acc; text-decoration: none; }-->
-<!--        a:hover { text-decoration: underline; }-->
-<!--        .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #999; }-->
-<!--    </style>-->
-<!--</head>-->
-<!--<body>-->
-<!--    <div class="container">-->
-<!--        <h1>Welcome to {{ app_name }}</h1>-->
-<!--        <p>{{ app_description }}</p>-->
-<!--        <p><strong>Version:</strong> {{ app_version }}</p>-->
-<!--        <ul>-->
-<!--            <li><a href="{{ app_url }}/docs">Swagger UI</a> - API Documentation</li>-->
-<!--            <li><a href="{{ app_url }}/redoc">ReDoc UI</a> - Alternative Documentation</li>-->
-<!--            <li><a href="{{ app_url }}/openapi.json">OpenAPI JSON</a> - API Schema</li>-->
-<!--        </ul>-->
-<!--        <p><strong>Author:</strong> {{ author }}</p>-->
-<!--        <p><strong>GitHub:</strong> <a href="{{ github }}">{{ github }}</a></p>-->
-<!--    </div>-->
-<!--    <div class="footer">-->
-<!--        &copy; {{ author }} - Powered by FastAPI-->
-<!--    </div>-->
-<!--</body>-->
-<!--</html>-->
