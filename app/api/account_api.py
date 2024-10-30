@@ -13,6 +13,7 @@ from app.api.vm.account_vm import ChangePasswordVM
 from app.api.vm.api_response import response_fail_status_codes
 from app.conf.app_settings import server_settings
 from app.conf.dependencies import get_account_service
+from app.errors.business_exception import BusinessException, ErrorCodes
 from app.schema.user_dto import UserDTO
 from app.security import auth_handler
 from app.security.jwt_token import JWTUser
@@ -81,7 +82,7 @@ async def change_password(
                     "summary": "Change password",
                     "description": "Change password for the current-user.",
                     "value": {
-                        "old_password": "old_password",
+                        "current_password": "old_password",
                         "new_password": "new_password"
                     }
                 },
@@ -89,7 +90,7 @@ async def change_password(
                     "summary": "Invalid payload",
                     "description": "Invalid payload is rejected with an error.",
                     "value": {
-                        "old_password": "invalid-old-password",
+                        "current_password": "invalid-old-password",
                         "new_password": "new-password",
                     }
                 }
@@ -97,6 +98,10 @@ async def change_password(
         )],
         account_service: AccountService = Depends(get_account_service),
         token_data: dict = Depends(auth_handler.get_token_user)) -> bool:
+    _log.debug(f"AccountApi Changing password {change_password_vm}")
+
+    if not change_password_vm.current_password or not change_password_vm.new_password:
+        raise BusinessException(ErrorCodes.INVALID_PAYLOAD, "Invalid current or new password")
     username = get_username_from_jwt_token(token_data)
     result = await account_service.change_password(username, change_password_vm)
     return result

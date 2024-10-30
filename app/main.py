@@ -2,12 +2,14 @@ import logging
 from contextlib import asynccontextmanager
 
 import markdown
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 
 from app import init_db, api
 from app.conf.app_settings import cors_settings, server_settings, app_settings
+from app.errors.business_exception import BusinessException
 from app.middleware.security_middleware import SecurityMiddleware
 from app.migration import user_migration
 
@@ -41,15 +43,15 @@ tags_metadata = [
     }
 ]
 servers_metadata = [
-        {
-            "url": app_settings.APP_URL,
-            "description": "Production server"
-        },
-        {
-            "url": "http://localhost:8000",
-            "description": "Local server"
-        }
-    ]
+    {
+        "url": app_settings.APP_URL,
+        "description": "Production server"
+    },
+    {
+        "url": "http://localhost:8000",
+        "description": "Local server"
+    }
+]
 app = FastAPI(
     title="PyFAPI",
     summary="Python FastAPI mongodb Application",
@@ -88,18 +90,19 @@ app.include_router(api.account_router)
 app.include_router(api.user_router)
 
 
-# async def get_root_page(request: Request):
-#     context = {
-#         "request": request,
-#         "app_name": app_settings.APP_NAME,
-#         "app_url": app_settings.APP_URL,
-#         "app_description": app_settings.APP_DESCRIPTION,
-#         "app_version": app_settings.APP_VERSION,
-#         "server_settings": server_settings,
-#         "author": "piai-team",
-#         "github": "https://github.com/cevheri/pyfapi"
-#     }
-#     return templates.TemplateResponse("index.html", context)
+def write_log(request: Request, exc: BusinessException):
+    log.error(f"BusinessException - Request: {request.method} {request.url.path} failed with {exc.code} {exc.msg}")
+
+
+@app.exception_handler(BusinessException)
+async def business_exception_handler(request: Request, exc: BusinessException):
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": {"error_code": f"{status.HTTP_400_BAD_REQUEST}.{exc.code.name}", "error_message": exc.msg}},
+        headers={"X-Error": f"{status.HTTP_400_BAD_REQUEST}.{exc.code}"},
+        media_type="application/json",
+        background=write_log(request, exc),
+    )
 
 
 async def get_root_page_from_readme(request: Request):

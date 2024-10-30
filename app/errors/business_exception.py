@@ -1,0 +1,20 @@
+from enum import Enum
+
+
+class ErrorCodes(Enum):
+    INVALID_PAYLOAD = "INVALID_PAYLOAD"
+    INVALID_INPUT = "INVALID_INPUT"
+    INVALID_OPERATION = "INVALID_OPERATION"
+    INVALID_STATE = "INVALID_STATE"
+    NOT_FOUND = "NOT_FOUND"
+    UNAUTHORIZED = "UNAUTHORIZED"
+    FORBIDDEN = "FORBIDDEN"
+    CONFLICT = "CONFLICT"
+    INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR"
+
+
+class BusinessException(Exception):
+    def __init__(self, code: ErrorCodes, msg: str):
+        self.code = code
+        self.msg = msg
+        super().__init__(msg)
