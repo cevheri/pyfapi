@@ -1,8 +1,9 @@
 import logging
-from typing import Optional
+from typing import Optional, Annotated
 
 from fastapi import (
     APIRouter,
+    Body,
     Depends,
     status,
     HTTPException,
@@ -10,7 +11,7 @@ from fastapi import (
 )
 from fastapi.responses import JSONResponse
 
-from app.api.vm.api_response import response_status_codes
+from app.api.vm.api_response import response_fail_status_codes
 from app.conf.app_settings import server_settings
 from app.conf.dependencies import get_user_service
 from app.conf.query_params import QueryParams
@@ -25,19 +26,68 @@ _log = logging.getLogger(__name__)
 router = APIRouter(prefix=_path,
                    tags=["users"],
                    dependencies=[Depends(auth_handler.get_token_user)],
-                   responses=response_status_codes)
+                   responses=response_fail_status_codes)
 
 
-@router.post("", response_model=UserDTO, status_code=status.HTTP_201_CREATED)
-async def create(user_create_data: UserCreate,
-                 request: Request,
-                 user_service: UserService = Depends(get_user_service),
-                 ) -> UserDTO:
+@router.post(
+    path="",
+    operation_id="create_user",
+    name="create_user",
+    summary="Create user",
+    response_model=UserDTO,
+    status_code=status.HTTP_201_CREATED,
+    response_model_exclude_unset=True,
+)
+async def create(
+        request: Request,
+        user_create_data: Annotated[UserCreate, Body(
+            ...,
+            title="User Create Data",
+            description="User data to create a new user.",
+            alias="user_create_data",
+            media_type="application/json",
+            openapi_examples={
+                "success_min_payload": {
+                    "summary": "Min payload.",
+                    "description": "Create a new user with the provided minimal user datas.",
+                    "value": {
+                        "username": "john_doe",
+                        "email": "john@doe.com",
+                        "password": "password",
+                    }
+                },
+                "success_full_payload": {
+                    "summary": "Full payload.",
+                    "description": "Create a new user with the provided full user data.",
+                    "value": {
+                        "username": "john_doe",
+                        "first_name": "John",
+                        "last_name": "Doe",
+                        "email": "john@doe.com",
+                        "password": "password",
+                        "is_active": True,
+                        "roles": ["user"],
+                    }
+                },
+                "invalid_payload": {
+                    "summary": "Invalid payload",
+                    "description": "Invalid payload is rejected with an error.",
+                    "value": {
+                        "username": "",
+                        "first_name": "John",
+                        "last_name": "Doe",
+                        "email": "",
+                    }
+                }
+            }
+        )],
+        user_service: UserService = Depends(get_user_service),
+) -> UserDTO:
     """
     Create a new user with the provided user data.
 
-    **user_create_data**: User data to create a new user.
-    **return**: List of users
+    - **user_create_data**: User data to create a new user.
+    - **return**: Created user details.
 
     The endpoint creates a new user with the provided user data and returns the created user's details.
     """

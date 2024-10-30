@@ -7,8 +7,7 @@ class ApiResponse(BaseModel):
     status_code: str = None
     message: str = None
 
-response_status_codes = {
-    200: {"description": "Success"},
+response_fail_status_codes = {
     401: {"description": "Unauthorized"},
     403: {"description": "Forbidden"},
     404: {"description": "Not Found"},

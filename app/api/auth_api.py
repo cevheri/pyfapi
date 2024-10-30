@@ -1,11 +1,11 @@
 import logging
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException
-from fastapi.params import Depends, Form
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.vm.account_vm import LoginVM
-from app.api.vm.api_response import response_status_codes
+from app.api.vm.api_response import response_fail_status_codes
 from app.conf import dependencies
 from app.conf.app_settings import server_settings
 from app.security.auth_service import create_access_token_for_user, AuthService
@@ -13,12 +13,52 @@ from app.security.jwt_token import JWTAccessToken
 
 _log = logging.getLogger(__name__)
 _path = server_settings.CONTEXT_PATH + "/auth"
-router = APIRouter(prefix=_path, tags=["auth"], responses=response_status_codes)
+router = APIRouter(prefix=_path, tags=["auth"], responses=response_fail_status_codes)
 
 
-@router.post("/login", name="jwt_login", summary="Login with username and password", response_model=JWTAccessToken)
-async def jwt_login(login_data: LoginVM = Form(...),
-                    auth_service: AuthService = Depends(dependencies.get_auth_service)) -> JWTAccessToken:
+@router.post(
+    path="/login",
+    operation_id="jwt_login",
+    name="jwt_login",
+    summary="Login with username and password",
+    response_model=JWTAccessToken,
+    status_code=status.HTTP_200_OK,
+)
+async def jwt_login(
+        login_data: Annotated[LoginVM, Body(
+            ...,
+            title="Login Data",
+            description="Login data with username and password.",
+            alias="login_data",
+            openapi_examples={
+                "min_payload": {
+                    "summary": "Min payload.",
+                    "description": "Login with the provided minimal login data.",
+                    "value": {
+                        "username": "admin",
+                        "password": "admin",
+                    }
+                },
+                "full_payload": {
+                    "summary": "Full payload.",
+                    "description": "Login with the provided full login data.",
+                    "value": {
+                        "username": "admin",
+                        "password": "admin",
+                        "remember": True
+                    }
+                },
+                "invalid_payload": {
+                    "summary": "Invalid payload.",
+                    "description": "Login with the provided invalid username or password.",
+                    "value": {
+                        "username": "invalid_username",
+                        "password": "invalid_password"
+                    }
+                }
+            }
+        )],
+        auth_service: AuthService = Depends(dependencies.get_auth_service)) -> JWTAccessToken:
     """
     Login with username and password to get the access token.
 
@@ -39,9 +79,17 @@ async def jwt_login(login_data: LoginVM = Form(...),
     return result
 
 
-@router.post("/login/oauth", name="oauth_login", summary="OAuth login")
+@router.post(
+    path="/login/oauth",
+    operation_id="oauth_login",
+    name="oauth_login",
+    summary="OAuth login",
+    response_model=JWTAccessToken,
+    status_code=status.HTTP_200_OK,
+)
 async def oauth_login(oauth_data: OAuth2PasswordRequestForm = Depends(OAuth2PasswordRequestForm),
-                      auth_service: AuthService = Depends(dependencies.get_auth_service)):
+                      auth_service: AuthService = Depends(
+                          dependencies.get_auth_service)) -> HTTPException | JWTAccessToken:
     """
     Login with OAuth to get the access token.
 
