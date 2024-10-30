@@ -15,14 +15,14 @@ from app.migration import user_migration
 
 print("app.main.py is running")
 
-log = logging.getLogger(__name__)
+_log = logging.getLogger(__name__)
 
-templates = Jinja2Templates(directory="././templates")
+_templates = Jinja2Templates(directory="././templates")
 
 
 @asynccontextmanager
 async def lifespan(_):
-    log.debug("FastAPI Lifespan started")
+    _log.debug("FastAPI Lifespan started")
     await init_db()
     await user_migration.init_migration()
     yield
@@ -85,13 +85,11 @@ app.add_middleware(
 )
 # noinspection PyTypeChecker
 app.add_middleware(SecurityMiddleware)
-app.include_router(api.auth_router)
-app.include_router(api.account_router)
-app.include_router(api.user_router)
+app.include_router(api.api_router)
 
 
 def write_log(request: Request, exc: BusinessException):
-    log.error(f"BusinessException - Request: {request.method} {request.url.path} failed with {exc.code} {exc.msg}")
+    _log.error(f"BusinessException - Request: {request.method} {request.url.path} failed with {exc.code} {exc.msg}")
 
 
 @app.exception_handler(BusinessException)
@@ -120,7 +118,7 @@ async def get_root_page_from_readme(request: Request):
         "github": "https://github.com/cevheri/pyfapi",
         "readme_content": html
     }
-    return templates.TemplateResponse("index.html", context)
+    return _templates.TemplateResponse("index.html", context)
 
 
 @app.get("/")
