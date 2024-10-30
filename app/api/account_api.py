@@ -20,11 +20,12 @@ from app.security.jwt_token import JWTUser
 from app.service.account_service import AccountService
 from app.utils.jwt_token_utils import get_username_from_jwt_token
 
-_path = server_settings.CONTEXT_PATH + "/account"
+_resource = "account"
+_path = f"{server_settings.CONTEXT_PATH}/{_resource}"
 _log = logging.getLogger(__name__)
 
 router = APIRouter(prefix=_path,
-                   tags=["account"],
+                   tags=[_resource],
                    dependencies=[Depends(auth_handler.get_token_user)],
                    responses=response_fail_status_codes
                    )
@@ -101,7 +102,7 @@ async def change_password(
     _log.debug(f"AccountApi Changing password {change_password_vm}")
 
     if not change_password_vm.current_password or not change_password_vm.new_password:
-        raise BusinessException(ErrorCodes.INVALID_PAYLOAD, "Invalid current or new password")
+        raise BusinessException(ErrorCodes.INVALID_PAYLOAD, "Invalid current-password or new-password")
     username = get_username_from_jwt_token(token_data)
     result = await account_service.change_password(username, change_password_vm)
     return result

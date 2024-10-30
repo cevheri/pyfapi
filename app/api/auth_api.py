@@ -11,9 +11,10 @@ from app.conf.app_settings import server_settings
 from app.security.auth_service import create_access_token_for_user, AuthService
 from app.security.jwt_token import JWTAccessToken
 
+_resource = "auth"
+_path = f"{server_settings.CONTEXT_PATH}/{_resource}"
 _log = logging.getLogger(__name__)
-_path = server_settings.CONTEXT_PATH + "/auth"
-router = APIRouter(prefix=_path, tags=["auth"], responses=response_fail_status_codes)
+router = APIRouter(prefix=_path, tags=[_resource], responses=response_fail_status_codes)
 
 
 @router.post(

@@ -20,11 +20,12 @@ from app.security import auth_handler
 from app.service.user_service import UserService
 from app.utils.header_utils import create_list_header
 
-_path = server_settings.CONTEXT_PATH + "/users"
+_resource = "users"
+_path = f"{server_settings.CONTEXT_PATH}/{_resource}"
 _log = logging.getLogger(__name__)
 
 router = APIRouter(prefix=_path,
-                   tags=["users"],
+                   tags=[_resource],
                    dependencies=[Depends(auth_handler.get_token_user)],
                    responses=response_fail_status_codes)
 
