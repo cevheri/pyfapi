@@ -73,7 +73,7 @@ class QueryParams(BaseModel):
     sort: str = "+_id"
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "q": '{"username":"john_doe1"}',
                 "page": 0,

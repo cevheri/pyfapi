@@ -5,19 +5,19 @@ from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
 # @formatter:off
 class _UserBase(BaseModel):
-    first_name: str = Field(..., alias="first_name", min_length=1, max_length=100, title="First Name", description="First Name")
-    last_name: str = Field(..., alias="last_name", min_length=1, max_length=100, title="Last Name", description="Last Name")
-    email: EmailStr = Field(..., alias="email", title="Email", description="Email Address")
-    is_active: bool = Field(..., alias="is_active", title="Is Active", description="Record is active or not")
-    roles: list[str] = Field(..., alias="roles", title="Roles", description="List of roles")
+    first_name: str | None = None # Field(..., alias="first_name", min_length=1, max_length=100, title="First Name", description="First Name")
+    last_name: str | None = None #Field(..., alias="last_name", min_length=1, max_length=100, title="Last Name", description="Last Name")
+    email: EmailStr | None = None #Field(..., alias="email", title="Email", description="Email Address")
+    is_active: bool | None = None #Field(..., alias="is_active", title="Is Active", description="Record is active or not")
+    roles: list[str] | None = None #Field(..., alias="roles", title="Roles", description="List of roles")
 
 class UserDTO(_UserBase):
-    user_id: str = Field(..., alias="user_id", min_length=1, max_length=50, title="User ID", description="Unique Identifier of the record")
-    username: str = Field(..., alias="username", min_length=1, max_length=50, title="Username", description="username for login")
-    created_by: str = Field(..., alias="created_by", min_length=1, max_length=50, title="Created By", description="Created By of the record")
-    created_date: datetime = Field(..., alias="created_date", title="Created Date", description="Created Date of the record")
-    last_updated_by: str = Field(..., alias="last_updated_by", min_length=1, max_length=50, title="Last Updated By", description="Last Updated By of the record")
-    last_updated_date: datetime = Field(..., alias="last_updated_date", title="Last Updated Date", description="Last Updated Date of the record")
+    user_id: str | None = Field(..., alias="user_id", min_length=1, max_length=50, title="User ID", description="Unique Identifier of the record")
+    username: str | None = Field(..., alias="username", min_length=1, max_length=50, title="Username", description="username for login")
+    created_by: str | None = Field(..., alias="created_by", min_length=1, max_length=50, title="Created By", description="Created By of the record")
+    created_date: datetime | None = Field(..., alias="created_date", title="Created Date", description="Created Date of the record")
+    last_updated_by: str | None = Field(..., alias="last_updated_by", min_length=1, max_length=50, title="Last Updated By", description="Last Updated By of the record")
+    last_updated_date: datetime | None = Field(..., alias="last_updated_date", title="Last Updated Date", description="Last Updated Date of the record")
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -55,8 +55,8 @@ class UserDTO(_UserBase):
 
 class UserCreate(_UserBase):
     """UserCreate schema"""
-    username: str = Field(..., alias="username", min_length=1, max_length=50, title="Username", description="username for login")
-    password: str = Field(..., alias="password", min_length=1, max_length=50, title="Password", description="Plain-text password")
+    username: str | None = Field(..., alias="username", min_length=1, max_length=50, title="Username", description="username for login")
+    password: str | None = Field(..., alias="password", min_length=1, max_length=50, title="Password", description="Plain-text password")
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -87,7 +87,6 @@ class UserUpdate(_UserBase):
                 "last_name": "Doe",
                 "email": "john@doe.com",
                 "is_active": True,
-                "password": "plain-text-password",
                 "roles": ["admin", "user"]
             }
         }

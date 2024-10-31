@@ -1,9 +1,9 @@
 services:
   app:
+    container_name: pyfapi
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: pyfapi
     env_file:
       - .env.dev
     ports:

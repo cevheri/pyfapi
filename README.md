@@ -14,7 +14,6 @@ Also, this project use pydantic, motor, beanie, and docker.
 
 ---
 
-
 ## Technologies
 
 - **[FastAPI](https://fastapi.tiangolo.com/)**: A modern, fast (high-performance) web framework for building APIs with
@@ -29,9 +28,10 @@ Also, this project use pydantic, motor, beanie, and docker.
   Data models are based on Pydantic.
 - **[Docker](https://www.docker.com/)**: Docker is a set of platform as a service products that use OS-level
   virtualization to deliver software in packages called containers.
+- **[Oauth2](https://fastapi.tiangolo.com/tutorial/security)**: OAuth2 with Password (and hashing), Bearer with JWT
+  tokens.
 
 ---
-
 
 ## Setup and Installation
 
@@ -139,6 +139,24 @@ docker-compose up --build
 
 ---
 
+## Security
+
+Security is a critical aspect of any application. This project uses OAuth2 with Password (and hashing), Bearer with JWT
+tokens.
+
+* Security settings are defined in the [app/security](app/security) directory.
+* Security middleware is defined in the [app/middleware/security.py](app/middleware/security_middleware.py) file.
+
+### Allowed endpoints
+
+- if you want to allow the endpoint without authentication, you can add the endpoint to the env file like this:
+
+```bash
+SECURITY_ALLOWED_PATHS=/api/v1/public/products
+```
+
+---
+
 ## Folder Structure
 
 | ...               | ...                           |
@@ -146,15 +164,62 @@ docker-compose up --build
 | -- app            | Main application directory    | 
 | -- app/api        | API endpoints and routes      |
 | -- app/config     | Configuration settings        |
-| -- app/entity     | Data models                   |
+| -- app/entity     | Database models               |
 | -- app/repository | Data access layer             |
 | -- app/service    | Business logic layer          |
+| -- app/schema     | API models                    |
 | -- app/security   | Security settings             |
 | -- app/utils      | Utility functions             |
 | -- app/main.py    | Main application file         |
 | -- tests          | Test cases                    |
 | -- .env.default   | Default environment variables |
 | ...               | ...                           |
+
+---
+
+## Adding new features
+
+This project use a clean architecture, separation of concerns, and single responsibility principles.
+If you want to add a new feature, you need to follow the structure of the project.
+
+For example, you need product management features. You can follow the steps below.
+
+1. product_api.py: API endpoints and routes, request, and response models, and API logic. OpenAPI documentation, and
+   Swagger UI.
+2. product_service.py: Business logic layer
+3. product_dto.py: API models for API endpoints
+4. product_repository.py: Data access layer for database operations
+5. product.py: Database models for MongoDB (Beanie ODM)
+
+### Add new schema
+
+- Create a new file in the [app/schema](app/schema) like **product_dto.py** (use the existing files as a
+  reference [user_dto.py](app/schema/user_dto.py)) Classes: ProductDTO, ProductCreate, ProductUpdate
+
+### Add a new API endpoint / Route
+
+- Create a new file in the app/api directory like **product_api.py** (use the existing files as a
+  reference [user_api.py](app/api/user_api.py))
+- Edit the [app/api/__init__.py](app/api/__init__.py) file and add the new route
+
+### Add new service
+
+- Create a new file in the [app/service](app/service) like **product_service.py** (use the existing files as a
+  reference [user_service.py](app/service/user_service.py)) Classes: ProductService
+
+### Add new db-entity
+
+This project use Beanie ODM for MongoDB. You can create a new entity for the database.
+
+- Create a new file in the [app/entity](app/entity) like **product.py** (use the existing files as a
+  reference [user.py](app/entity/user_entity.py)) Classes: Product
+- Edit the [app/entity/__init__.py](app/entity/__init__.py) file and add the new entity
+- Edit the [app/conf/env/db_config.py](app/conf/env/db_config.py) file and add the new entity **init_beanie()**
+- 
+### Add new repository
+- Create a new file in the [app/repository](app/repository) like **product_repository.py** (use the existing files as a
+  reference [user_repository.py](app/repository/user_repository.py)) Classes: ProductRepository
+
 
 ---
 
@@ -175,5 +240,3 @@ Feel free to contribute to this project by submitting issues or pull requests!
 - [Pydantic](https://docs.pydantic.dev/dev/)
 - [Motor](https://motor.readthedocs.io/en/stable/tutorial-asyncio.html)
 - [Beanie Tutorial](https://beanie-odm.dev/getting-started/)
-- 
-

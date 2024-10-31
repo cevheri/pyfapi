@@ -16,7 +16,7 @@ class SecurityMiddleware(BaseHTTPMiddleware):
 
         token = request.headers.get("Authorization")
         if not self._is_valid_token(token):
-            return JSONResponse(status_code=401, content={"detail": "Unauthorized"})
+            return JSONResponse(status_code=401, content={"detail": "Unauthorized access"})
 
         request.state.jwt_user = self._get_user_from_token(token)
         response = await call_next(request)

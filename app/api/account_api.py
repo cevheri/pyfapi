@@ -83,7 +83,7 @@ async def change_password(
                     "summary": "Change password",
                     "description": "Change password for the current-user.",
                     "value": {
-                        "current_password": "old_password",
+                        "current_password": "current_password",
                         "new_password": "new_password"
                     }
                 },

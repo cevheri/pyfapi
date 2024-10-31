@@ -2,15 +2,29 @@
 __pycache__
 .Python
 
+# eclipse
+.classpath
+.project
+.settings/
+
 #pycharm
-.idea/
+/.idea/
 *.iml
 
 #vscode
-.vscode
+/.vscode/
 
 /venv/
 /env/
+
+# node
+node_modules/
+
+
+__pycache__
+.ipynb_checkpoints
+.models
+
 .env
 .env.dev
 .env.prod

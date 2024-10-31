@@ -63,7 +63,7 @@ class User(Document):
             created_by="",  # Not allowed to update
             created_date=None,  # Not allowed to update
             last_updated_by="system",
-            last_updated_date=datetime.now(timezone.utc)
+            last_updated_date=datetime.now(timezone.utc),
         )
 
     @staticmethod
@@ -79,7 +79,7 @@ class User(Document):
             created_by=user_dto.created_by,
             created_date=user_dto.created_date,
             last_updated_by=user_dto.last_updated_by,
-            last_updated_date=user_dto.last_updated_date
+            last_updated_date=user_dto.last_updated_date,
         )
 
     def __str__(self):

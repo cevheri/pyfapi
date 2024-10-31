@@ -48,13 +48,27 @@ class UserService:
         log.info(f"UserService Initializing")
         self.user_repository = user_repository
 
+    async def user_create_validation(self, user_create: UserCreate):
+        """
+        Validate user create request
+            - Check if user with email already exists
+            - Check if user with username already exists
+        :param user_create: UserCreate
+        """
+        if await User.find_one(User.username == user_create.username):
+            raise BusinessException(ErrorCodes.ALREADY_EXISTS,
+                                    f"User with username already exists: {user_create.username}")
+        if await User.find_one(User.email == user_create.email):
+            raise BusinessException(ErrorCodes.ALREADY_EXISTS,
+                                    f"User with email already exists: {user_create.email}")
+
     async def create(self, user_create: UserCreate) -> UserDTO:
         log.debug(f"UserService Creating user: {user_create} with: {type(user_create)}")
 
         user = User.from_create(user_create)
         user.user_id = str(uuid.uuid4())
         user.hashed_password = PasswordUtil().hash_password(user_create.password)
-
+        await self.user_create_validation(user_create)
         final_user = await self.user_repository.create(user)
         result = UserDTO.model_validate(final_user)
         log.debug(f"UserService User created: {result.user_id}")
@@ -105,8 +119,7 @@ class UserService:
         log.debug("UserService User updated")
         return result
 
-    @staticmethod
-    async def check_default_user(username: str):
+    async def check_default_user(self, username: str):
         log.debug(f"UserService Checking default user: {username}")
         if username == "admin":
             raise BusinessException(ErrorCodes.INVALID_PAYLOAD, "Default user cannot be edited or deleted")
@@ -137,3 +150,19 @@ class UserService:
         result = UserDTO.model_validate(final_user)
         log.debug(f"UserService User retrieved: {result}")
         return result
+
+    async def change_password(self, username, current_password, new_password):
+        log.debug(f"UserService Validating user password: {username}")
+        user = await self.user_repository.get_user_by_username(username)
+        if user is None:
+            raise BusinessException(ErrorCodes.NOT_FOUND, f"User not found: {username}")
+
+        if not PasswordUtil().verify_password(current_password, user.hashed_password):
+            log.error(f"AccountService Password mismatch")
+            raise BusinessException(ErrorCodes.INVALID_PAYLOAD, "Password mismatch")
+
+        user.hashed_password = PasswordUtil().hash_password(new_password)
+        await self.user_repository.update(user)
+
+        log.debug(f"UserService User password validated")
+        return user

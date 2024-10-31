@@ -7,8 +7,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 
-from app import init_db, api
-from app.conf.app_settings import cors_settings, server_settings, app_settings
+from app.api import api_router
+from app.conf.app_settings import app_settings, server_settings, cors_settings
+from app.conf.env.db_config import init_db
 from app.errors.business_exception import BusinessException
 from app.middleware.security_middleware import SecurityMiddleware
 from app.migration import user_migration
@@ -16,7 +17,6 @@ from app.migration import user_migration
 print("app.main.py is running")
 
 _log = logging.getLogger(__name__)
-
 _templates = Jinja2Templates(directory="././templates")
 
 
@@ -53,9 +53,9 @@ servers_metadata = [
     }
 ]
 app = FastAPI(
-    title="PyFAPI",
-    summary="Python FastAPI mongodb Application",
-    description="Python FastAPI mongodb app for Enterprise usage with best practices, tools, and more.",
+    title=app_settings.APP_NAME,
+    summary=app_settings.APP_DESCRIPTION,
+    description=app_settings.APP_DESCRIPTION,
     version="1.0.0",
     docs_url=f"{server_settings.CONTEXT_PATH}/docs",
     redoc_url=f"{server_settings.CONTEXT_PATH}/redoc",
@@ -83,9 +83,10 @@ app.add_middleware(
     allow_methods=cors_settings.ALLOWED_METHODS,
     allow_headers=cors_settings.ALLOWED_HEADERS
 )
+
 # noinspection PyTypeChecker
 app.add_middleware(SecurityMiddleware)
-app.include_router(api.api_router)
+app.include_router(api_router)
 
 
 def write_log(request: Request, exc: BusinessException):
@@ -118,6 +119,7 @@ async def get_root_page_from_readme(request: Request):
         "github": "https://github.com/cevheri/pyfapi",
         "readme_content": html
     }
+
     return _templates.TemplateResponse("index.html", context)
 
 

@@ -1,9 +1,9 @@
 import logging
 
 from app.api.vm.account_vm import ChangePasswordVM
-from app.schema.user_dto import UserDTO, UserUpdate
+from app.errors.business_exception import BusinessException, ErrorCodes
+from app.schema.user_dto import UserDTO
 from app.service.user_service import UserService
-from app.utils.pass_util import PasswordUtil
 
 log = logging.getLogger(__name__)
 
@@ -30,20 +30,15 @@ class AccountService:
 
     async def change_password(self, username: str, change_password: ChangePasswordVM) -> bool:
         log.debug(f"AccountService Changing password")
+
         if username is None:
             log.error(f"AccountService User not found")
-            return False
-        user = await self.user_service.retrieve_by_username(username)
-        if user is None:
-            log.error(f"AccountService User not found")
-            return False
+            raise BusinessException(ErrorCodes.NOT_FOUND, "User not found")
 
-        if not PasswordUtil().verify_password(change_password.old_password, user.password):
-            log.error(f"AccountService Password mismatch")
-            return False
+        if change_password.current_password == change_password.new_password:
+            raise BusinessException(ErrorCodes.INVALID_PAYLOAD, "New password cannot be the same as the current password")
 
-        user.password = PasswordUtil().hash_password(password=change_password.new_password)
-        user_update = UserUpdate.model_validate(user)
-        result = await self.user_service.update(user.user_id, user_update)
-        log.debug(f"AccountService Password changed for user: {result.username}")
+        await self.user_service.change_password(username, change_password.current_password, change_password.new_password)
+
+        log.debug(f"AccountService Password changed")
         return True

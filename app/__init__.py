@@ -1,7 +1,6 @@
 import logging
 
-from app.conf.app_settings import log_settings, db_settings
-from app.conf.env.db_config import init_db
+from app.conf.app_settings import log_settings, app_settings
 
 print("app.__init__.py is running")
 
@@ -25,4 +24,4 @@ log = logging.getLogger(__name__)
 
 
 print("logger configured")
-log.info("PyFAPI Application started")
+log.info(f"{app_settings.APP_NAME} Application started")

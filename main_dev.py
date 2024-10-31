@@ -3,7 +3,7 @@ import uvicorn
 from app.conf.app_settings import server_settings
 
 if __name__ == "__main__":
-    print("Running in dev")
+    print("Running in dev environment")
     host = server_settings.HOST
     port = server_settings.PORT
     reload = server_settings.RELOAD

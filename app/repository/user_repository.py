@@ -14,15 +14,13 @@ class UserRepository:
     def __init__(self):
         _log.debug(f"UserRepository Connecting to database")
 
-    @staticmethod
-    async def create(user: User) -> User:
+    async def create(self, user: User) -> User:
         _log.debug(f"UserRepository Creating user: {user}")
         doc = await User.insert(user)
         _log.debug(f"UserRepository User created _id: {doc}")
         return user
 
-    @staticmethod
-    async def retrieve(user_id: str) -> User | None:
+    async def retrieve(self, user_id: str) -> User | None:
         _log.debug(f"UserRepository Retrieving user: {user_id}")
         doc = await User.find_one({"user_id": user_id})
         if not doc:
@@ -56,15 +54,15 @@ class UserRepository:
     #         content = await cursor.to_list(length=size)
     #         page_content = [User(**doc) for doc in content]
 
-    @staticmethod
-    async def find(query: str, page: int, size: int, sort: str) -> PageResponse[User]:
+    async def find(self, query: str, page: int, size: int, sort: str) -> PageResponse:
         _log.debug(f"UserRepository list request")
         if query is None:
             query = {}
         else:
             query = json.loads(query)
 
-        total_count = await User.find(query).count()
+        doc = User.find(query)
+        total_count = await doc.count()
         if total_count == 0:
             return PageResponse(content=[], page=page, size=size, total=total_count)
 
@@ -74,24 +72,25 @@ class UserRepository:
         _log.debug(f"UserRepository Users retrieved")
         return PageResponse(content=page_content, page=page, size=size, total=total_count)
 
-    @staticmethod
-    async def update(user: User) -> User | None:
+
+    async def update(self, user: User) -> User | None:
         _log.debug(f"UserRepository Updating user")
-        result = await User.update_one({"user_id": user.user_id}, user)
+        result = await user.replace()
         _log.debug(f"UserRepository User updated: {result}")
         return user
 
     @staticmethod
     async def delete(user_id: str) -> bool:
         _log.debug(f"UserRepository Deleting user: {user_id}")
-        result = await User.delete_one({"user_id": user_id})
+        result = await User.find_one({"user_id": user_id}).delete()
         _log.debug(f"UserRepository User deleted: {result.deleted_count}")
         return result.deleted_count > 0
 
     @staticmethod
     async def count(query: dict) -> int:
         _log.debug(f"UserRepository Counting users with query: {query}")
-        result = await User.find(query).count()
+        doc = User.find(query)
+        result = await doc.count()
         _log.debug(f"UserRepository Users counted: {result}")
         return result
 

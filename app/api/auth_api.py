@@ -14,7 +14,10 @@ from app.security.jwt_token import JWTAccessToken
 _resource = "auth"
 _path = f"{server_settings.CONTEXT_PATH}/{_resource}"
 _log = logging.getLogger(__name__)
-router = APIRouter(prefix=_path, tags=[_resource], responses=response_fail_status_codes)
+router = APIRouter(
+    prefix=_path,
+    tags=[_resource],
+    responses=response_fail_status_codes)
 
 
 @router.post(
