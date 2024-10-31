@@ -158,7 +158,8 @@ async def find(query: QueryParams = Depends(QueryParams),
     **sort**: Sort the users.
 
     **return**: List of users
-    ** sample usage**:
+
+    **sample usage**:
     - /users?q={"username":"john_doe1"}
     - /users?q={"age": {"$gte": 25}}
     - /users?q={"$or": [{"username": "john_doe1"}, {"age": {"$gte": 25}}]}

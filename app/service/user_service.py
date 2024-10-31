@@ -7,6 +7,7 @@ from fastapi import Depends
 from app.conf.app_settings import app_settings
 from app.conf.page_response import PageResponse
 from app.entity.user_entity import User
+from app.errors.business_exception import BusinessException, ErrorCodes
 from app.repository.user_repository import UserRepository
 from app.schema.user_dto import UserDTO, UserCreate, UserUpdate
 from app.service.email_service import send_email
@@ -104,8 +105,15 @@ class UserService:
         log.debug("UserService User updated")
         return result
 
+    @staticmethod
+    async def check_default_user(username: str):
+        log.debug(f"UserService Checking default user: {username}")
+        if username == "admin":
+            raise BusinessException(ErrorCodes.INVALID_PAYLOAD, "Default user cannot be edited or deleted")
+
     async def delete(self, user_id: str) -> bool:
         log.debug(f"UserService Deleting user: {user_id}")
+        await self.check_default_user(user_id)
         result = await self.user_repository.delete(user_id)
         log.debug(f"UserService User deleted")
         return result

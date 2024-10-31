@@ -22,12 +22,7 @@ class User(Document):
     age: Optional[int] = None
 
     class Settings:
-        collection = "User"
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        for k, v in kwargs.items():
-            setattr(self, k, v)
+        name = "app_user"
 
     def set_updated(self, user_id: str = None):
         self.last_updated_by = user_id or "system"

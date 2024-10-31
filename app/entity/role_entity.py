@@ -5,4 +5,4 @@ class Role(Document):
     name: str
 
     class Settings:
-        collection = "app_role"
+        name = "app_role"
