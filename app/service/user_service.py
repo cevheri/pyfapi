@@ -72,7 +72,10 @@ class UserService:
         final_user = await self.user_repository.create(user)
         result = UserDTO.model_validate(final_user)
         log.debug(f"UserService User created: {result.user_id}")
-        await send_creation_email(result)
+        try:
+            await send_creation_email(result)
+        except Exception as e:
+            log.error(f"UserService Error sending creation email: {e}")
         return result
 
     async def retrieve(self, user_id: str) -> Optional[UserDTO]:
@@ -124,12 +127,12 @@ class UserService:
         if username == "admin":
             raise BusinessException(ErrorCodes.INVALID_PAYLOAD, "Default user cannot be edited or deleted")
 
-    async def delete(self, user_id: str) -> bool:
+    async def delete(self, user_id: str):
         log.debug(f"UserService Deleting user: {user_id}")
         await self.check_default_user(user_id)
-        result = await self.user_repository.delete(user_id)
+        await self.user_repository.delete(user_id)
         log.debug(f"UserService User deleted")
-        return result
+        return
 
     async def count(self, query: dict) -> int:
         log.debug(f"UserService Counting users with query: {query}")

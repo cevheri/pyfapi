@@ -2,22 +2,23 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from beanie import Document
+from pydantic import EmailStr
 
 from app.schema.user_dto import UserDTO, UserCreate, UserUpdate
 
 
 class User(Document):
-    user_id: Optional[str] = None
+    user_id: str
     username: str
     first_name: str
     last_name: str
-    email: str
+    email: EmailStr
     hashed_password: Optional[str] = None
     is_active: bool = False
-    roles: list[str]
+    roles: list[str] | None = None
     created_by: Optional[str] = None
     created_date: Optional[datetime] = None
-    last_updated_by: str
+    last_updated_by: str | None = None
     last_updated_date: datetime = datetime.now(timezone.utc)
     age: Optional[int] = None
 

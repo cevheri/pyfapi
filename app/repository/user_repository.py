@@ -10,15 +10,21 @@ _log = logging.getLogger(__name__)
 
 
 class UserRepository:
+    """
+    User Repository class
+
+    This class is responsible for handling all the database operations related to the User entity.
+    User entity is a beanie document model and all the operations are performed using the beanie library.
+    """
 
     def __init__(self):
         _log.debug(f"UserRepository Connecting to database")
 
     async def create(self, user: User) -> User:
         _log.debug(f"UserRepository Creating user: {user}")
-        doc = await User.insert(user)
-        _log.debug(f"UserRepository User created _id: {doc}")
-        return user
+        result = await User.insert(user)
+        _log.debug(f"UserRepository User created")
+        return result
 
     async def retrieve(self, user_id: str) -> User | None:
         _log.debug(f"UserRepository Retrieving user: {user_id}")
@@ -72,38 +78,37 @@ class UserRepository:
         _log.debug(f"UserRepository Users retrieved")
         return PageResponse(content=page_content, page=page, size=size, total=total_count)
 
-
     async def update(self, user: User) -> User | None:
         _log.debug(f"UserRepository Updating user")
         result = await user.replace()
-        _log.debug(f"UserRepository User updated: {result}")
+        _log.debug(f"UserRepository User updated")
         return user
 
-    @staticmethod
-    async def delete(user_id: str) -> bool:
+    async def delete(self, user_id: str):
         _log.debug(f"UserRepository Deleting user: {user_id}")
-        result = await User.find_one({"user_id": user_id}).delete()
-        _log.debug(f"UserRepository User deleted: {result.deleted_count}")
-        return result.deleted_count > 0
+        result = await User.find_one({"user_id": user_id})
+        if not result:
+            raise BusinessException(ErrorCodes.NOT_FOUND, f"User not found: {user_id}")
 
-    @staticmethod
-    async def count(query: dict) -> int:
+        await result.delete()
+        _log.debug(f"UserRepository User deleted")
+        return
+
+    async def count(self, query: dict) -> int:
         _log.debug(f"UserRepository Counting users with query: {query}")
         doc = User.find(query)
         result = await doc.count()
-        _log.debug(f"UserRepository Users counted: {result}")
+        _log.debug(f"UserRepository Users counted")
         return result
 
-    @staticmethod
-    async def get_user_by_email(email: str) -> Optional[User]:
+    async def get_user_by_email(self, email: str) -> Optional[User]:
         _log.debug(f"UserRepository Retrieving user by email: {email}")
         doc = await User.find_one({"email": email})
         result = doc
         _log.debug(f"UserRepository User retrieved")
         return result
 
-    @staticmethod
-    async def get_user_by_username(username: str) -> Optional[User]:
+    async def get_user_by_username(self, username: str) -> Optional[User]:
         _log.debug(f"UserRepository Retrieving user by username: {username}")
         doc = await User.find_one({"username": username})
         result = doc
