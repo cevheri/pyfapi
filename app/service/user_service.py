@@ -142,21 +142,21 @@ class UserService:
 
     async def retrieve_by_email(self, email: str) -> Optional[UserDTO]:
         log.debug(f"UserService Retrieving user by email: {email}")
-        final_user = await self.user_repository.get_user_by_email(email)
+        final_user = await self.user_repository.retrieve_by_email(email)
         result = UserDTO.model_validate(final_user)
         log.debug(f"UserService User retrieved: {result}")
         return result
 
     async def retrieve_by_username(self, username: str) -> Optional[UserDTO]:
         log.debug(f"UserService Retrieving user by username: {username}")
-        final_user = await self.user_repository.get_user_by_username(username)
+        final_user = await self.user_repository.retrieve_by_username(username)
         result = UserDTO.model_validate(final_user)
         log.debug(f"UserService User retrieved: {result}")
         return result
 
     async def change_password(self, username, current_password, new_password):
         log.debug(f"UserService Validating user password: {username}")
-        user = await self.user_repository.get_user_by_username(username)
+        user = await self.user_repository.retrieve_by_username(username)
         if user is None:
             raise BusinessException(ErrorCodes.NOT_FOUND, f"User not found: {username}")
 

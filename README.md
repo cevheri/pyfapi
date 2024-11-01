@@ -215,11 +215,40 @@ This project use Beanie ODM for MongoDB. You can create a new entity for the dat
   reference [user.py](app/entity/user_entity.py)) Classes: Product
 - Edit the [app/entity/__init__.py](app/entity/__init__.py) file and add the new entity
 - Edit the [app/conf/env/db_config.py](app/conf/env/db_config.py) file and add the new entity **init_beanie()**
-- 
+-
+
 ### Add new repository
+
 - Create a new file in the [app/repository](app/repository) like **product_repository.py** (use the existing files as a
   reference [user_repository.py](app/repository/user_repository.py)) Classes: ProductRepository
 
+---
+
+## Run tests
+
+Unit tests and integration tests are essential for ensuring the quality of the application. This project uses pytest for
+testing.
+
+- Folder structure
+
+| ...              | ...                            |
+|------------------|--------------------------------|
+| test             | Test cases                     |
+| tests/api        | API endpoints and routes tests |
+| tests/service    | Business logic layer tests     | 
+| tests/repository | Data access layer tests        |
+
+- Run all tests
+
+```bash
+PYTHONPATH=. pytest
+```
+
+Sample result :
+
+```bash
+22 passed in 0.52s
+```
 
 ---
 

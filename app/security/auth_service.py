@@ -21,7 +21,7 @@ class AuthService:
         return self.pwd_context.hash(password)
 
     async def authenticate_user(self, username: str, password: str):
-        user = await self.user_repository.get_user_by_username(username)
+        user = await self.user_repository.retrieve_by_username(username)
         if not user:
             return False
         if not self.verify_password(password, user.hashed_password):

@@ -26,14 +26,21 @@ class UserRepository:
         _log.debug(f"UserRepository User created")
         return result
 
-    async def retrieve(self, user_id: str) -> User | None:
-        _log.debug(f"UserRepository Retrieving user: {user_id}")
-        doc = await User.find_one({"user_id": user_id})
-        if not doc:
-            raise BusinessException(ErrorCodes.NOT_FOUND, f"User not found: {user_id}")
-        result = doc
-        _log.debug(f"UserRepository User retrieved")
+    async def update(self, user: User) -> User | None:
+        _log.debug(f"UserRepository Updating user")
+        result = await user.replace()
+        _log.debug(f"UserRepository User updated")
         return result
+
+    async def delete(self, user_id: str):
+        _log.debug(f"UserRepository Deleting user: {user_id}")
+        result = await User.find_one({"user_id": user_id})
+        if not result:
+            raise BusinessException(ErrorCodes.NOT_FOUND, f"User not found: {user_id}")
+
+        await result.delete()
+        _log.debug(f"UserRepository User deleted")
+        return
 
     # TODO - Implement the find method
     #        # Parse the query string if provided, otherwise set to an empty dict
@@ -60,15 +67,14 @@ class UserRepository:
     #         content = await cursor.to_list(length=size)
     #         page_content = [User(**doc) for doc in content]
 
-    async def find(self, query: str, page: int, size: int, sort: str) -> PageResponse:
+    async def find(self, query: str | None = None, page: int = 0, size: int = 10, sort: str = "-_id") -> PageResponse:
         _log.debug(f"UserRepository list request")
         if query is None:
             query = {}
         else:
             query = json.loads(query)
 
-        doc = User.find(query)
-        total_count = await doc.count()
+        total_count = await self.count(query)
         if total_count == 0:
             return PageResponse(content=[], page=page, size=size, total=total_count)
 
@@ -78,22 +84,6 @@ class UserRepository:
         _log.debug(f"UserRepository Users retrieved")
         return PageResponse(content=page_content, page=page, size=size, total=total_count)
 
-    async def update(self, user: User) -> User | None:
-        _log.debug(f"UserRepository Updating user")
-        result = await user.replace()
-        _log.debug(f"UserRepository User updated")
-        return user
-
-    async def delete(self, user_id: str):
-        _log.debug(f"UserRepository Deleting user: {user_id}")
-        result = await User.find_one({"user_id": user_id})
-        if not result:
-            raise BusinessException(ErrorCodes.NOT_FOUND, f"User not found: {user_id}")
-
-        await result.delete()
-        _log.debug(f"UserRepository User deleted")
-        return
-
     async def count(self, query: dict) -> int:
         _log.debug(f"UserRepository Counting users with query: {query}")
         doc = User.find(query)
@@ -101,16 +91,29 @@ class UserRepository:
         _log.debug(f"UserRepository Users counted")
         return result
 
-    async def get_user_by_email(self, email: str) -> Optional[User]:
-        _log.debug(f"UserRepository Retrieving user by email: {email}")
-        doc = await User.find_one({"email": email})
+    async def retrieve(self, user_id: str) -> User | None:
+        _log.debug(f"UserRepository Retrieving user: {user_id}")
+        doc = await User.find_one({"user_id": user_id})
+        if not doc:
+            raise BusinessException(ErrorCodes.NOT_FOUND, f"User not found: {user_id}")
         result = doc
         _log.debug(f"UserRepository User retrieved")
         return result
 
-    async def get_user_by_username(self, username: str) -> Optional[User]:
+    async def retrieve_by_email(self, email: str) -> Optional[User]:
+        _log.debug(f"UserRepository Retrieving user by email: {email}")
+        doc = await User.find_one({"email": email})
+        if not doc:
+            raise BusinessException(ErrorCodes.NOT_FOUND, f"User not found: {email}")
+        result = doc
+        _log.debug(f"UserRepository User retrieved")
+        return result
+
+    async def retrieve_by_username(self, username: str) -> Optional[User]:
         _log.debug(f"UserRepository Retrieving user by username: {username}")
         doc = await User.find_one({"username": username})
+        if not doc:
+            raise BusinessException(ErrorCodes.NOT_FOUND, f"User not found: {username}")
         result = doc
         _log.debug(f"UserRepository User retrieved")
         return result
