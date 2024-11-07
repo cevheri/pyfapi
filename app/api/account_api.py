@@ -60,7 +60,7 @@ async def get_account(
 async def me(request: Request) -> JWTUser:
     _log.debug(f"AccountApi Retrieving user from token")
     jwt_user = request.state.jwt_user
-    _log.debug(f"AccountApi User retrieved")
+    _log.debug(f"AccountApi User retrieved, {jwt_user.sub}")
     return jwt_user
 
 

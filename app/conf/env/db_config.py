@@ -29,6 +29,13 @@ class DatabaseSettings(BaseSettings):
 
     MONGODB_URI: str = "mongodb://localhost:27017"
     DATABASE_NAME: str = "app"
+    HOST: str = "localhost"
+    PORT: int = 27017
+    USERNAME: str = "admin"
+    PASSWORD: str = "admin"
+    LOG_COLLECTION: str = "app_log"
+
+
 
 
 async def init_db():

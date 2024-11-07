@@ -65,12 +65,16 @@ class UserService:
     async def create(self, user_create: UserCreate) -> UserDTO:
         log.debug(f"UserService Creating user: {user_create} with: {type(user_create)}")
 
-        user = User.from_create(user_create)
-        user.user_id = str(uuid.uuid4())
-        user.hashed_password = PasswordUtil().hash_password(user_create.password)
-        await self.user_create_validation(user_create)
-        final_user = await self.user_repository.create(user)
-        result = UserDTO.model_validate(final_user)
+        try:
+            user = User.from_create(user_create)
+            user.user_id = str(uuid.uuid4())
+            user.hashed_password = PasswordUtil().hash_password(user_create.password)
+            await self.user_create_validation(user_create)
+            final_user = await self.user_repository.create(user)
+            result = UserDTO.model_validate(final_user)
+        except Exception as e:
+            raise BusinessException(ErrorCodes.INVALID_PAYLOAD, f"Error creating user: {e}")
+
         log.debug(f"UserService User created: {result.user_id}")
         try:
             await send_creation_email(result)
