@@ -10,6 +10,7 @@ from app.entity.user_entity import User
 from app.errors.business_exception import BusinessException, ErrorCodes
 from app.repository.user_repository import UserRepository
 from app.schema.user_dto import UserDTO, UserCreate, UserUpdate
+from app.security.jwt_token import JWTUser
 from app.service import email_service
 from app.utils.pass_util import PasswordUtil
 
@@ -62,13 +63,16 @@ class UserService:
             raise BusinessException(ErrorCodes.ALREADY_EXISTS,
                                     f"User with email already exists: {user_create.email}")
 
-    async def create(self, user_create: UserCreate) -> UserDTO:
+    async def create(self, user_create: UserCreate, token_data: JWTUser) -> UserDTO:
         _log.debug(f"UserService Creating user: {user_create} with: {type(user_create)}")
 
         try:
-            user = User.from_create(user_create)
+            hashed_password = PasswordUtil().hash_password(user_create.password)
+            user = User(**user_create.model_dump(), hashed_password = hashed_password)
+            user.created_by = token_data.sub
+            user.last_updated_by = token_data.sub
             user.user_id = str(uuid.uuid4())
-            user.hashed_password = PasswordUtil().hash_password(user_create.password)
+
             await self.user_create_validation(user_create)
             final_user = await self.repository.create(user)
             result = UserDTO.model_validate(final_user)
@@ -107,7 +111,7 @@ class UserService:
         _log.debug("UserService Users retrieved")
         return page_response
 
-    async def update(self, user_id: str, user_update: UserUpdate) -> Optional[UserDTO]:
+    async def update(self, user_id: str, user_update: UserUpdate, token_data: JWTUser) -> Optional[UserDTO]:
         _log.debug(f"UserService Updating user: {user_id} with: {type(user_update)}")
 
         if not user_update:
@@ -123,6 +127,7 @@ class UserService:
             if getattr(user_update, attr) is not None:
                 setattr(user_entity, attr, getattr(user_update, attr))
 
+        user_entity.last_updated_by = token_data.sub
         final_user = await self.repository.update(user_entity)
         result = UserDTO.model_validate(final_user)
         _log.debug("UserService User updated")

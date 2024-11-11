@@ -9,7 +9,7 @@ class JWTUser(BaseModel):
     sub: str = Field(alias="sub", title="Username")
     email: str = Field(alias="email", title="Email")
     scopes: list[str] = Field(alias="scopes", title="Roles")
-    expires: float = Field(alias="exp", title="Expires of the token")
+    exp: float = Field(alias="exp", title="Expires of the token")
     token: str = Field(alias="token", title="Access Token")
 
 

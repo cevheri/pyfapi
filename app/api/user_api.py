@@ -93,8 +93,8 @@ async def create(
     The endpoint creates a new user with the provided user data and returns the created user's details.
     """
     token_data = request.state.jwt_user
-    _log.debug(f"UserApi Creating user: {user_create_data}  {token_data}")
-    result = await user_service.create(user_create_data)
+    _log.debug(f"UserApi Creating user: {user_create_data}  TokenUser:{token_data}")
+    result = await user_service.create(user_create_data, token_data)
     if result is None:
         _log.error(f"UserApi User not created")
         raise HTTPException(status_code=400, detail="User not created")

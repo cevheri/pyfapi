@@ -4,6 +4,7 @@ from starlette.responses import JSONResponse
 
 from app.conf.app_settings import security_settings, server_settings
 from app.security import auth_handler
+from app.security.jwt_token import JWTUser
 
 API_PREFIX = server_settings.CONTEXT_PATH
 ALLOWED_PATHS = [resource for resource in security_settings.ALLOWED_PATHS]
@@ -38,6 +39,6 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         return token is not None and auth_handler.is_valid_token(token.replace("Bearer ", ""))
 
     @staticmethod
-    def _get_user_from_token(token: str):
+    def _get_user_from_token(token: str) -> JWTUser:
         """Retrieve user information from the token."""
         return auth_handler.get_jwt_user_from_token(token.replace("Bearer ", ""))

@@ -28,6 +28,8 @@ class UserRepository:
 
     async def update(self, user: User) -> User | None:
         _log.debug(f"UserRepository Updating user")
+        if user.user_id is None:
+            raise BusinessException(ErrorCodes.INVALID_PAYLOAD, "User id is required for update")
         result = await user.replace()
         _log.debug(f"UserRepository User updated")
         return result
@@ -74,7 +76,7 @@ class UserRepository:
         else:
             query = json.loads(query)
 
-        total_count = await self.count(query)
+        total_count = await User.find(query).count()
         if total_count == 0:
             return PageResponse(content=[], page=page, size=size, total=total_count)
 
