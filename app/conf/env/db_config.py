@@ -27,15 +27,13 @@ class DatabaseSettings(BaseSettings):
 
     model_config = SettingsConfigDict(env_prefix="DB_")
 
-    MONGODB_URI: str = "mongodb://localhost:27017"
+    MONGODB_URI: str | None = None
     DATABASE_NAME: str = "app"
     HOST: str = "localhost"
     PORT: int = 27017
-    USERNAME: str = "admin"
-    PASSWORD: str = "admin"
+    USERNAME: str | None = None
+    PASSWORD: str | None = None
     LOG_COLLECTION: str = "app_log"
-
-
 
 
 async def init_db():
@@ -43,11 +41,18 @@ async def init_db():
     Load database settings from the environment variables
     """
     log.info("Loading database settings")
-    # log.debug(f"Database URI: {DatabaseSettings().MONGODB_URI}")
+    mongodb_uri = ""
+    if DatabaseSettings().MONGODB_URI:
+        mongodb_uri = DatabaseSettings().MONGODB_URI
+    else:
+        mongodb_uri = f"mongodb://{DatabaseSettings().HOST}:{DatabaseSettings().PORT}"
+        if DatabaseSettings().USERNAME and DatabaseSettings().PASSWORD:
+            mongodb_uri = f"mongodb://{DatabaseSettings().USERNAME}:{DatabaseSettings().PASSWORD}@{DatabaseSettings().HOST}:{DatabaseSettings().PORT}"
+
     log.debug(f"Database name: {DatabaseSettings().DATABASE_NAME}")
 
     global client, db
-    client = AsyncIOMotorClient(DatabaseSettings().MONGODB_URI)
+    client = AsyncIOMotorClient(mongodb_uri)
     db = client[DatabaseSettings().DATABASE_NAME]
 
-    await init_beanie(database=db, document_models=[entity.User, entity.Role]) # TODO change-me: add more entities here
+    await init_beanie(database=db, document_models=[entity.User, entity.Role])  # TODO change-me: add more entities here
