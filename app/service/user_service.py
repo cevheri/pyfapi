@@ -68,7 +68,7 @@ class UserService:
 
         try:
             hashed_password = PasswordUtil().hash_password(user_create.password)
-            user = User(**user_create.model_dump(), hashed_password = hashed_password)
+            user = User(**user_create.model_dump(), hashed_password=hashed_password)
             user.created_by = token_data.sub
             user.last_updated_by = token_data.sub
             user.user_id = str(uuid.uuid4())
@@ -164,7 +164,7 @@ class UserService:
         _log.debug(f"UserService User retrieved: {result}")
         return result
 
-    async def change_password(self, username, current_password, new_password):
+    async def change_password(self, username: str, current_password: str, new_password: str):
         _log.debug(f"Validating user password: {username}")
         user = await self.repository.retrieve_by_username(username)
         if user is None:
@@ -178,4 +178,3 @@ class UserService:
         await self.repository.update(user)
 
         _log.debug("Validated user password")
-        return user
