@@ -111,10 +111,18 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
       """
 
     def __init__(self, *args, **kwargs):
+        """
+        Initializes the TestUserRepository class.
+        :param args: arguments
+        :param kwargs:  keyword arguments
+        """
         _log.info("Initializing TestUserRepository")
         super(TestUserRepository, self).__init__(*args, **kwargs)
 
     async def asyncSetUp(self):
+        """
+        Sets up the resources required for the tests.
+        """
         _log.info("Setting up each resources.")
         self.container = MongoDbContainer(image="mongo:latest")
         self.container.start()
@@ -124,6 +132,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
         await init_beanie(document_models=entities, database=self.db)
 
     async def asyncTearDown(self):
+        """
+        Tears down the resources after the tests.
+        """
         _log.info("Tearing down each resources.")
         await self.db.get_collection(_collection_name).delete_many({})
         self.client.close()
@@ -132,6 +143,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # region create entity tests
     @pytest.mark.asyncio
     async def test_given_min_entity_when_insert_then_successfully_created(self):
+        """
+        Test case to create a user entity with minimal data and verify the creation process.
+        """
         _log.info("test_given_min_entity_when_insert_then_successfully_created")
         # Given
         entity = _get_min_entity()
@@ -157,6 +171,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
 
     @pytest.mark.asyncio
     async def test_given_full_entity_when_insert_then_successfully_created(self):
+        """
+        Test case to create a user entity with full data and verify the creation process.
+        """
         _log.info("test_given_full_entity_when_insert_then_successfully_created")
 
         # Given
@@ -183,6 +200,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
 
     @pytest.mark.asyncio
     async def test_given_invalid_entity_when_insert_then_fail(self):
+        """
+        Test case to handle invalid user entity creation attempts.
+        """
         _log.info("test_given_invalid_entity_when_insert_then_fail")
 
         # Given
@@ -199,6 +219,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # region update entity tests
     @pytest.mark.asyncio
     async def test_given_entity_when_update_then_successfully_updated(self):
+        """
+        Test case to update a user entity and verify the changes are correctly applied.
+        """
         _log.info("test_given_entity_when_update_then_successfully_updated")
 
         # Given
@@ -236,6 +259,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
 
     @pytest.mark.asyncio
     async def test_given_invalid_userid_when_update_then_fail(self):
+        """
+        Test case to handle invalid user ID during update attempts.
+        """
         _log.info("test_given_invalid_entity_when_update_then_fail")
 
         # inti entity
@@ -251,6 +277,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
 
     @pytest.mark.asyncio
     async def test_given_invalid_username_when_update_then_fail(self):
+        """
+        Test case to handle invalid username during update attempts.
+        """
         _log.info("test_given_invalid_entity_when_update_then_fail")
 
         # inti entity
@@ -266,6 +295,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
 
     @pytest.mark.asyncio
     async def test_given_invalid_email_when_update_then_fail(self):
+        """
+        Test case to handle invalid email during update attempts.
+        """
         _log.info("test_given_invalid_entity_when_update_then_fail")
 
         # inti entity
@@ -291,6 +323,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
 
     @pytest.mark.asyncio
     async def test_given_deleted_entity_when_retrieve_then_should_fail(self):
+        """
+        Test case to handle deleted user entity retrieval attempts.
+        """
         _log.info("test_given_entity_when_delete_then_successfully_deleted")
 
         # Given
@@ -309,6 +344,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
 
     @pytest.mark.asyncio
     async def test_given_random_id_when_delete_then_should_fail(self):
+        """
+        Test case to handle deletion attempts for non-existent user entities.
+        """
         _log.info("test_given_entity_when_delete_then_successfully_deleted")
 
         repository = _get_repo()
@@ -327,6 +365,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # success case with default values
     @pytest.mark.asyncio
     async def test_given_entity_when_find_then_success(self):
+        """
+        Test case to find user entities and verify the results.
+        """
         _log.info("test_given_entity_when_find_then_success")
 
         # Given
@@ -346,6 +387,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # success case with mongodb query
     @pytest.mark.asyncio
     async def test_given_native_mogo_query_when_find_with_query_then_success(self):
+        """
+        Test case to find user entities with a MongoDB query and verify the results.
+        """
         _log.info("test_given_entity_when_find_with_query_then_success")
 
         # Given
@@ -365,6 +409,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # success case with query, page, size, sort
     @pytest.mark.asyncio
     async def test_given_native_mogo_query_when_find_with_query_page_size_sort_then_success(self):
+        """
+        Test case to find user entities with a MongoDB query, pagination, and sorting, and verify the results.
+        """
         _log.info("test_given_entity_when_find_with_query_page_size_sort_then_success")
 
         # Given
@@ -384,6 +431,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # success case with dict convert to query, page, size, sort
     @pytest.mark.asyncio
     async def test_given_dict_when_find_with_query_then_success(self):
+        """
+        Test case to find user entities with a dictionary query, pagination, and sorting, and verify the results.
+        """
         _log.info("test_given_entity_when_find_with_invalid_query_then_fail")
 
         # Given
@@ -405,6 +455,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # fail case with invalid query
     @pytest.mark.asyncio
     async def test_given_invalid_query_when_find_with_invalid_query_then_fail(self):
+        """
+        Test case to handle invalid query attempts during user entity retrieval.
+        """
         _log.info("test_given_entity_when_find_with_invalid_query_then_fail")
 
         # Given
@@ -422,6 +475,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # success case with count
     @pytest.mark.asyncio
     async def test_given_entity_when_count_then_success(self):
+        """
+        Test case to count user entities and verify the results.
+        """
         _log.info("test_given_entity_when_count_then_success")
 
         # Given
@@ -440,6 +496,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # fail case with count
     @pytest.mark.asyncio
     async def test_given_invalid_query_when_count_with_invalid_query_then_fail(self):
+        """
+        Test case to handle invalid query attempts during user entity count.
+        """
         _log.info("test_given_entity_when_count_with_invalid_query_then_fail")
 
         # Given
@@ -457,6 +516,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # success case with valid  user_id retrieve
     @pytest.mark.asyncio
     async def test_given_entity_when_retrieve_then_success(self):
+        """
+        Test case to retrieve a user entity by user ID and verify the results.
+        """
         _log.info("test_given_entity_when_retrieve_then_success")
 
         # Given
@@ -479,6 +541,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # fail case with invalid user_id retrieve
     @pytest.mark.asyncio
     async def test_given_invalid_user_id_when_retrieve_then_fail(self):
+        """
+        Test case to handle invalid user ID during user entity retrieval.
+        """
         _log.info("test_given_invalid_user_id_when_retrieve_then_fail")
 
         # Given
@@ -494,6 +559,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # success case with valid email retrieve_by_email
     @pytest.mark.asyncio
     async def test_given_entity_when_retrieve_by_email_then_success(self):
+        """
+        Test case to retrieve a user entity by email and verify the results.
+        """
         _log.info("test_given_entity_when_retrieve_by_email_then_success")
 
         # Given
@@ -516,6 +584,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # fail case with invalid email retrieve_by_email
     @pytest.mark.asyncio
     async def test_given_invalid_email_when_retrieve_by_email_then_fail(self):
+        """
+        Test case to handle invalid email during user entity retrieval by email.
+        """
         _log.info("test_given_invalid_email_when_retrieve_by_email_then_fail")
 
         # Given
@@ -531,6 +602,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # success case with valid username retrieve_by_username
     @pytest.mark.asyncio
     async def test_given_entity_when_retrieve_by_username_then_success(self):
+        """
+        Test case to retrieve a user entity by username and verify the results.
+        """
         _log.info("test_given_entity_when_retrieve_by_username_then_success")
 
         # Given
@@ -553,6 +627,9 @@ class TestUserRepository(unittest.IsolatedAsyncioTestCase):
     # fail case with invalid username retrieve_by_username
     @pytest.mark.asyncio
     async def test_given_invalid_username_when_retrieve_by_username_then_fail(self):
+        """
+        Test case to handle invalid username during user entity retrieval by username.
+        """
         _log.info("test_given_invalid_username_when_retrieve_by_username_then_fail")
 
         # Given

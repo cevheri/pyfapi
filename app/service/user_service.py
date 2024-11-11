@@ -17,24 +17,6 @@ from app.utils.pass_util import PasswordUtil
 _log = logging.getLogger(__name__)
 
 
-async def send_creation_email(user: UserDTO):
-    """
-    Send creation email to user with background task
-    :param user: created user information
-    """
-    _log.debug(f"UserService Sending creation email on background task to user: {user.email}")
-    to = user.email
-    app_name = app_settings.APP_NAME
-    app_url = app_settings.APP_URL
-    subject = f"Welcome to the {app_name}"
-    body = f"Hello {user.first_name},\n\n" \
-           f"Welcome to the {app_name}. Your account has been created successfully.\n\n" \
-           f"Please visit {app_url} to login to your account.\n\n" \
-           f"{app_name} Team."
-    await email_service.send_email(to, subject, body)
-    _log.debug(f"UserService Creation email sent to user: {user.email}")
-
-
 class UserService:
     """
     User Business Logic Service that is responsible for handling business logic for User entity operations.
@@ -48,6 +30,7 @@ class UserService:
     def __init__(self, user_repository: UserRepository = Depends()):
         _log.info("UserService Initializing")
         self.repository = user_repository
+        self.email_service = email_service
 
     async def user_create_validation(self, user_create: UserCreate):
         """
@@ -62,6 +45,26 @@ class UserService:
         if await User.find_one(User.email == user_create.email):
             raise BusinessException(ErrorCodes.ALREADY_EXISTS,
                                     f"User with email already exists: {user_create.email}")
+
+    async def send_creation_email(self, user: UserDTO):
+        """
+        Send creation email to user with background task
+        :param user: created user information
+        """
+        _log.debug(f"Sending creation email on background task")
+        if user is None:
+            raise BusinessException(ErrorCodes.NOT_FOUND, "User not found")
+
+        to = user.email
+        app_name = app_settings.APP_NAME
+        app_url = app_settings.APP_URL
+        subject = f"Welcome to the {app_name}"
+        body = f"Hello {user.first_name},\n\n" \
+               f"Welcome to the {app_name}. Your account has been created successfully.\n\n" \
+               f"Please visit {app_url} to login to your account.\n\n" \
+               f"{app_name} Team."
+        await self.email_service.send_email(to, subject, body)
+        _log.debug(f"Sent Creation email sent to user: {user.email}")
 
     async def create(self, user_create: UserCreate, token_data: JWTUser) -> UserDTO:
         _log.debug(f"UserService Creating user: {user_create} with: {type(user_create)}")
@@ -83,7 +86,7 @@ class UserService:
 
         _log.debug(f"UserService User created: {result.user_id}")
         try:
-            await send_creation_email(result)
+            await self.send_creation_email(result)
         except Exception as e:
             _log.error(f"UserService Error sending creation email: {e}")
         return result

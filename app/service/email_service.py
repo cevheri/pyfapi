@@ -52,5 +52,8 @@ async def send_email(to, subject: str, body: str, attachment_path: str | None = 
         log.info(f"Send email to {to} successfully, From: {username} {attachment_message}")
     except Exception as e:
         log.error(f"Failed to send email to {to}, Error: {e}")
+        return False
     finally:
         server.quit()
+
+    return True
