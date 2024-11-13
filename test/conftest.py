@@ -30,3 +30,19 @@
 # #     await init_beanie(database=db, document_models=[User])
 # #     yield db
 # #     client.close()
+
+# conftest.py
+# import pytest
+# from fastapi.testclient import TestClient
+# from app.main import app
+# from dotenv import load_dotenv
+#
+# @pytest.fixture(scope="module")
+# def test_client():
+#     load_dotenv(".env.dev")
+#     with TestClient(app) as client:
+#         yield client
+
+
+
+
