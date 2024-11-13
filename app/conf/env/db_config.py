@@ -3,7 +3,7 @@ import logging
 
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 
 from app import entity
 
@@ -12,7 +12,6 @@ client = None
 db = None
 
 
-# , cli_parse_args=True for dev or prod environments like uvicorn run app:app --host "" --port 8080 --profile dev
 class DatabaseSettings(BaseSettings):
     """
     Database settings
@@ -25,8 +24,6 @@ class DatabaseSettings(BaseSettings):
         Database name to connect to in MongoDB
     """
 
-    model_config = SettingsConfigDict(env_prefix="DB_")
-
     MONGODB_URI: str | None = None
     DATABASE_NAME: str = "app"
     HOST: str = "localhost"
@@ -34,6 +31,12 @@ class DatabaseSettings(BaseSettings):
     USERNAME: str | None = None
     PASSWORD: str | None = None
     LOG_COLLECTION: str = "app_log"
+
+    class Config:
+        env_prefix = "DB_"
+        env_file = ".env.dev"
+        env_file_encoding = "utf-8"
+        case_sensitive = True
 
 
 async def init_db():

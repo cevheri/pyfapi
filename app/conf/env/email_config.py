@@ -1,6 +1,6 @@
 # Email Configuration
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 
 
 class SMTPSettings(BaseSettings):
@@ -21,10 +21,14 @@ class SMTPSettings(BaseSettings):
         SMTP server TLS
     """
 
-    model_config = SettingsConfigDict(env_prefix="MAIL_")
-
     SMTP_HOST: str = "smtp.gmail.com"
     SMTP_PORT: int = 587
     SMTP_USERNAME: str = "pfapi@gmail.com"
     SMTP_PASSWORD: str = "password"
     SMTP_TLS: bool = True
+
+    class Config:
+        env_prefix = "MAIL_"
+        env_file = ".env.dev"
+        env_file_encoding = "utf-8"
+        case_sensitive = True

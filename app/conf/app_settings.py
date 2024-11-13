@@ -19,6 +19,12 @@ class ApplicationSettings(BaseSettings):
     APP_URL: str = "http://localhost:8000"
     APP_DEBUG: bool = True
 
+    class Config:
+        # env_prefix = "APP_"
+        env_file = ".env.dev"
+        env_file_encoding = "utf-8"
+        case_sensitive = True
+
 
 app_settings = ApplicationSettings()
 log_settings = LoggingSettings()

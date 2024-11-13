@@ -1,5 +1,5 @@
 # Server - API configuration
-from pydantic_settings import SettingsConfigDict, BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class ServerSettings(BaseSettings):
@@ -22,11 +22,15 @@ class ServerSettings(BaseSettings):
         Base path for the API endpoints in the server like /api/v1 or /pyfapi/api/v2 etc.
     """
 
-    model_config = SettingsConfigDict(env_prefix="SERVER_")
-
     HOST: str = "0.0.0.0"
     PORT: int = 8000
     DEBUG: bool = True
     RELOAD: bool = True
     WORKERS: int = 1
     CONTEXT_PATH: str = "/api/v1"
+
+    class Config:
+        env_prefix = "SERVER_"
+        env_file = ".env.dev"
+        env_file_encoding = "utf-8"
+        case_sensitive = True
