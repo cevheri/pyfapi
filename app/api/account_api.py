@@ -42,7 +42,7 @@ router = APIRouter(prefix=_path,
 async def get_account(
         request: Request,
         account_service: AccountService = Depends(get_account_service)) -> UserDTO | None:
-    _log.debug(f"AccountApi read_users_me rest request")
+    _log.debug(f"BEGIN:get_account rest request")
     jwt_user = request.state.jwt_user
     user = await account_service.get_account(jwt_user.sub)
     _log.debug(f"AccountApi read_users_me rest response: {user}")

@@ -17,8 +17,8 @@ class JWTSettings(BaseSettings):
     """
 
     ALGORITHM: str = "HS256"
+    EXPIRATION: int = 86400
     SECRET_KEY: str = "change_this_secret_key_on_env_file"
-    EXPIRATION: int = 3600
 
     class Config:
         env_prefix = "JWT_"
